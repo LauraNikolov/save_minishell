@@ -1,0 +1,4 @@
+1 - export ecrase les anciennes variables + segfault avec une seule commande, refaire la fonction swap_nodes
+2 - gerer les caractere &
+3 - ranger les infiles
+parenthe juste une a la fin pas bon
