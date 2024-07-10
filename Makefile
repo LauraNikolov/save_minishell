@@ -4,14 +4,13 @@ CC = cc
 
 PARSEDIR = parse
 EXECDIR = exec
-MAINDIR = ../MINISHELL
 LIBFTDIR = libft
 BUILTINSDIR = builtins
 
 PARSE_SRCS = $(wildcard $(PARSEDIR)/*.c)
 BUILTINS_SRCS = $(wildcard $(BUILTINSDIR)/*.c)
 EXEC_SRCS = $(wildcard $(EXECDIR)/*.c)
-MAIN_SRCS = $(wildcard $(MAINDIR)/*.c)
+MAIN_SRCS = main.c \
 
 PARSE_OBJS = $(PARSE_SRCS:.c=.o)
 BUILTINS_OBJS = $(BUILTINS_SRCS:.c=.o)

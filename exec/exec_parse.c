@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_parse.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lauranicoloff <lauranicoloff@student.42    +#+  +:+       +#+        */
+/*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 11:56:13 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/10 11:19:05 by lauranicolo      ###   ########.fr       */
+/*   Updated: 2024/07/10 15:23:45 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,6 +124,16 @@ int ft_nbr_of_cmd(t_cmd *cmd)
 	return(i);
 }
 
+int recursive_free_ast(t_ast *ast)
+{
+	if(ast->left)
+		recursive_free_ast(ast->left);
+	if(ast->right)
+		recursive_free_ast(ast->right);
+	free(ast);
+	return(0);
+}
+
 	void ft_exec(save_struct *t_struct, char **envp)
 	{
 		int cmd_size;
@@ -147,6 +157,7 @@ int ft_nbr_of_cmd(t_cmd *cmd)
 			ft_exec_multi_cmds(t_struct, envp);
 			close_fds(t_struct->cmd);
 			destroy_tmp_file(t_struct->cmd);
+			recursive_free_ast(t_struct->ast);
 		}
 	}
 	

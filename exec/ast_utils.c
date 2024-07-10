@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 15:45:40 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/06/21 17:30:58 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/10 13:21:31 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,8 +74,8 @@ void	print_ast(t_ast *root, int depth, char prefix)
 		printf("%s\n", cmd_type_to_string(root->cmd->type));
 	}
 	// Appel récursif pour les sous-arbres gauche et droit
-	print_ast(root->left, depth + 1, '|');
-	print_ast(root->right, depth + 1, '`');
+	//print_ast(root->left, depth + 1, '|');
+	//print_ast(root->right, depth + 1, '`');
 }
 
 int	count_parenthesis(t_cmd *node)

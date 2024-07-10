@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 18:33:30 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/10 12:06:46 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/10 15:22:02 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,11 @@ int	ft_execve_single_cmd(t_cmd *cmd, char **envp, save_struct *t_struct)
 			close(cmd->std_out);
 		}
 		if (execve(cmd->path, cmd->cmd, envp) == -1)
-			ft_parse_error(cmd);
+			{
+				printf("%s, %s couco\n", cmd->path, cmd->cmd[0]);
+				//ft_parse_error(cmd);
+			}
+			
 		exit(0);
 	}
 	else
