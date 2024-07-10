@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 18:33:30 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/06/27 12:49:04 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/10 12:06:46 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,7 +195,7 @@ int	exec_leaf(t_ast *root, char **envp, t_ast *save_root, int return_value,
 			apply_redir(cmd2);
 			return_value = ft_execve_pipe(cmd2, envp, root, t_struct,
 					save_root);
-			if (root == save_root)
+			if (root == save_root || (root->parent == save_root && root->parent->cmd->type != PIPE))
 			{
 				pid = 0;
 				// int i = get_nbr_of_pipe(save_root->cmd);
@@ -403,7 +403,6 @@ void	ft_handle_ast_recursive(t_ast *root, char **envp, t_ast *save_root,
 void	ft_handle_exec(t_ast *root, char **envp, t_ast *save_root,
 		int *return_value, save_struct *t_struct)
 {
-
 	if (root->cmd->type == PIPE)
 	{
 		pipe(root->cmd->pipe);
@@ -416,7 +415,7 @@ void	ft_handle_exec(t_ast *root, char **envp, t_ast *save_root,
 		apply_redir(root->right->cmd);
 		*return_value = ft_execve_pipe(root->right->cmd, envp, root, t_struct,
 				save_root);
-		if (root == save_root)
+		if (root == save_root || root->parent == save_root)
 		{
 			int status;
 			int pid;
@@ -479,8 +478,6 @@ void	ft_handle_exec(t_ast *root, char **envp, t_ast *save_root,
 int	exec_ast_recursive(t_ast *root, char **envp, t_ast *save_root,
 		int return_value, save_struct *t_struct)
 {
-	dprintf(2, "CECI EST LE ROOT : \n");
-	print_ast(root, 0, ' ');
 	if (root == NULL)
 		return (return_value);
 	if (root->left->cmd->type == PIPE || root->left->cmd->type == AND

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fork.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lauranicoloff <lauranicoloff@student.42    +#+  +:+       +#+        */
+/*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 12:59:48 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/03 17:41:05 by lauranicolo      ###   ########.fr       */
+/*   Updated: 2024/07/10 11:56:44 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,6 @@ int ft_exec_tree(t_ast *root)
     i = 0;
     
     (void)root;
-    printf("CECI EST LE ROOT : \n");
-    print_ast(root, 0 ,' ');
     return(i);
 }
 
