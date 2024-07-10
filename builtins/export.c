@@ -13,30 +13,25 @@ void	ft_print_env(t_envp **env)
 			continue ;
 		}
 		ft_putstr_fd("declare -x ", 1);
-		if (curr->var_name[ft_strlen(curr->var_name) - 1] == '=')
-		{
-			ft_putstr_fd(curr->var_name, 1);
-			write(1, "\"\"", 3);
-			break ;
-		}
 		ft_putstr_fd(curr->var_name, 1);
 		if (curr->var_value)
 		{
 			write(1, "=\"", 3);
-			if (curr->var_value[0])
-				ft_putstr_fd(curr->var_value, 1);
+			ft_putstr_fd(curr->var_value, 1);
 			write(1, "\"", 2);
 		}
+		else if (curr->print_flag && !curr->var_value)
+			write(1, "=\"\"", 4);
 		write(1, "\n", 2);
 		curr = curr->next;
 	}
 }
 
-static void	ft_sort_env(t_envp **env, char **var)
+void	ft_sort_env(t_envp **env)
 {
 	t_envp	*curr;
 
-	if (!env || !*env || !*var)
+	if (!env || !*env)
 		return ;
 	curr = *env;
 	while (curr->next)
@@ -55,53 +50,44 @@ static void	ft_sort_env(t_envp **env, char **var)
 static void	ft_add_var(t_envp **env, char *var)
 {
 	t_envp	*curr;
-	int		flag_add;
-	int		equal;
+	int		i;
+	//int		print_flag;
 	int		flag;
 
 	flag = 0;
-	flag_add = 0;
-	if (ft_is_char(var, '='))
-		equal = ft_strchr(var, '=');
-	else
-		equal = ft_strlen(var);
+	//print_flag = 0;
+	i = ft_strchr(var, '=');
+	if (i == -1)
+		i = ft_strlen(var);
 	curr = *env;
-	// while(curr)
-	// {
-	// 	if(!strcmp(curr->var_name))
-	// }
 	while (curr)
 	{
-		printf("%s%s\n", curr->var_name, var);
-		if (curr->var_name[ft_strlen(curr->var_name) - 1] == '=' && !ft_strncmp(curr->var_name, var, equal - 1))
-			flag_add = 1;
-		if (ft_strchr(curr->var_name, '=') && !ft_strncmp(curr->var_name, var, equal - 1))
+		if (!ft_strncmp(curr->var_name, var, i))
 		{
+			if ((size_t)i != ft_strlen(curr->var_name))
+				break ;
 			flag = 1;
-			flag_add = 1;
-		}
-		else if (!ft_strcmp(curr->var_name, var))
-		{
-			if (var[equal + 1])
-				ft_override_content(&curr->var_value, &var[equal + 1]);
-			flag_add = 1;
+			if (var[i + 1])
+				ft_override_content(&curr->var_value, &var[i + 1]);
+			if (var[i] == '=')
+				curr->print_flag = 1;
 		}
 		curr = curr->next;
 	}
-	if (var[equal] == '=' && !var[equal + 1])
-		flag = 1;
-	if (!flag_add)
-		add_to_envp_lst(env, create_envp_node(var, flag));
+	if (!flag && var[i] == '=')
+		add_to_envp_lst(env, create_envp_node(var, 1));
+	else if (!flag)
+		add_to_envp_lst(env, create_envp_node(var, 0));
 }
 
-static int	ft_fork_export(char **var, t_envp **env)
+static int	ft_fork_export(t_envp **env)
 {
 	pid_t	pid;
 
 	pid = fork();
 	if (pid == 0)
 	{
-		ft_sort_env(env, var);
+		ft_sort_env(env);
 		ft_print_env(env);
 		exit(0);
 	}
@@ -115,9 +101,11 @@ int	ft_export(char **var, t_envp **env)
 	int	i;
 
 	if (!env || !*var)
+	{
 		return (0);
+	}
 	if (!var[1])
-		return (ft_fork_export(var, env));
+		return (ft_fork_export(env));
 	i = 1;
 	while (var[i])
 	{

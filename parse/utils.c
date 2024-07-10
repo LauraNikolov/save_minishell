@@ -38,24 +38,23 @@ void	ft_free_tab(char **split)
 		free(split[i++]);
 	free(split);
 }
+
 void	ft_swap_content(char **s1, char **s2)
 {
 	char	*tmp;
 
-	tmp = ft_strdup(*s1);
-	free(*s1);
-	*s1 = NULL;
-	*s1 = ft_strdup(*s2);
-	*s2 = NULL;
-	free(*s2);
+	tmp = *s1;
+	*s1 = *s2;
 	*s2 = tmp;
 }
 
+
 void	ft_override_content(char **s1, char *s2)
 {
-	if (!*s1 || !s2)
+	if (!s2)
 		return ;
 	free(*s1);
+	*s1 = NULL;
 	*s1 = ft_strdup(s2);
 }
 
@@ -101,15 +100,9 @@ int	ft_putstr_cmd_fd(char *s, int fd, char **str, int flag)
 	return (-1);
 }
 
-void ft_print_tab(char **tab)
+void	ft_all_free(save_struct *t_struct)
 {
-	int i;
-
-	i = 0;
-	while (tab[i])
-	{
-		ft_putstr_fd(tab[i], 1);
-		ft_putstr_fd("\n", 1);
-		i++;
-	}
+	ft_free_lst(t_struct->cmd);
+	free(t_struct->save_spaces);
+	free(t_struct);
 }

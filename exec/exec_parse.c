@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_parse.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lauranicoloff <lauranicoloff@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 11:56:13 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/06/24 17:10:13 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/10 11:19:05 by lauranicolo      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,26 +58,96 @@ int	ft_exec_single_cmd(save_struct *t_struct, char **envp)
 	return(return_value);
 }
 
-	void ft_exec(save_struct * t_struct, char **envp)
-	{
-		char **myenvp;
-		int cmd_size;
-		(void)envp;
+void close_fds(t_cmd *cmd_list)
+{
+    t_cmd *current = cmd_list; // Remplacez t_cmd par le type de votre structure de commande
 
-		myenvp = ft_envp_to_char(t_struct->envp);
-		cmd_size = ft_lst_size(t_struct->cmd);
+    while (current != NULL && current->next)
+    {
+        // Ferme std_out si ce n'est pas la sortie standard
+        if (current->std_out != 1)
+        {
+            close(current->std_out);
+            current->std_out = 1; // Réinitialise à la sortie standard
+        }
+
+		// Ferme std_in si ce n'est pas l'entrée standard
+		if(current->std_in != 0)
+		{
+			close(current->std_in);
+			current->std_in = 0;
+		}
+
+		if(current->type == R_HEREDOC)
+			free(current->next->redir);
+        // Ajoutez ici des vérifications similaires pour std_in si nécessaire
+
+        current = current->next; // Passe à la commande suivante dans la liste
+	}
+}
+
+void destroy_tmp_file(t_cmd *cmd)
+{
+	t_cmd *current;
+	t_redir *current_redir;
+
+	current = cmd;
+	while(current)
+	{
+		if(current->redir)
+		{
+			current_redir = current->redir;
+			while(current_redir)
+			{
+				if(current_redir->type == R_HEREDOC)
+					unlink(current_redir->next->redir);
+				current_redir = current_redir->next->next;
+			}
+		}
+		current = current->next;
+	}
+}
+
+int ft_nbr_of_cmd(t_cmd *cmd)
+{
+	t_cmd *current;
+	int i;
+
+	current = cmd;
+	i = 0;
+	while(current)
+	{
+		if(current->type == WORD)
+			i++;
+		current = current->next;
+	}
+	return(i);
+}
+
+	void ft_exec(save_struct *t_struct, char **envp)
+	{
+		int cmd_size;
+		int return_value;
+
+		cmd_size = ft_nbr_of_cmd(t_struct->cmd);
 		if (cmd_size == 1)
 		{
-			int return_value = ft_exec_single_cmd(t_struct, myenvp);
-			ft_free_tab(myenvp);
-			dprintf(2, "return value single cmd = %d\n", return_value);
-			//t_return_code(ft_itoa(return_value), &t_struct->envp);
-			return ;
+			t_struct->cmd->std_in = 0;
+			t_struct->cmd->std_out = 1;
+			manage_heredoc(t_struct->cmd);
+			apply_redir(t_struct->cmd);
+			return_value = ft_execve_single_cmd(t_struct->cmd, envp, t_struct);
+			close_fds(t_struct->cmd);
+			ft_return_code(ft_itoa(return_value), &t_struct->envp);
+			destroy_tmp_file(t_struct->cmd);
 		}
 		else
 		{
-			ft_exec_multi_cmds(t_struct, myenvp);
+			manage_heredoc(t_struct->cmd);
+			ft_exec_multi_cmds(t_struct, envp);
+			close_fds(t_struct->cmd);
+			destroy_tmp_file(t_struct->cmd);
 		}
-		ft_free_tab(myenvp);
-		return ; 
 	}
+	
+	

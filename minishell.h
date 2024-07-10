@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lauranicoloff <lauranicoloff@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 14:41:19 by lauranicolo       #+#    #+#             */
-/*   Updated: 2024/06/24 17:00:43 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/06/26 15:21:06 by lauranicolo      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ int		main(int argc, char **argv, char **envp);
 t_cmd	*create_cmd_node(t_redir *redir, char *cmd, char c);
 char	**ft_strdup_array(char **cmd);
 int		ft_str_is_alpha(char *s);
-int		ft_is_symb(char *cmd, char *symb);
 int		ft_quote_len(char *s, int len);
 int		ft_tokenize(char *buffer, save_struct *t_struct, t_envp **env);
 int		ft_check_double_symbols(char *s, char **cmd);
@@ -54,7 +53,6 @@ void	ft_clean_cmd_lst(t_cmd **lst, save_struct *t_struct);
 char	*ft_search_var(char *var, t_envp **env);
 
 // Parsing
-int		ft_var_len(char *s, int brace_flag);
 void	ft_wildcard(t_cmd **cmd);
 
 // lst_proto
@@ -69,7 +67,7 @@ t_redir	*lst_last_redir(t_redir *node);
 void	add_to_redir_lst(t_redir **head, t_redir *new_node);
 t_envp	*lst_envp_last(t_envp *node);
 void	ft_free_node(t_cmd *node);
-t_envp	*create_envp_node(char *var_name, int flag);
+t_envp	*create_envp_node(char *var_name, int print_flag);
 void	ft_print_lst(t_cmd *node); // A SUPP A LA FIN
 void	ft_free_tab(char **split);
 void	ft_free_lst(t_cmd *lst);
@@ -77,6 +75,7 @@ void	ft_free_envp_lst(t_envp **lst);
 void	ft_all_free(save_struct *t_struct);
 int		ft_lst_size(t_cmd *cmd);
 void	ft_print_env(t_envp **env);
+void	ft_sort_env(t_envp **env);
 t_redir	*create_redir_node(char *s);
 
 // General utils
@@ -85,11 +84,10 @@ void	ft_override_content(char **s1, char *s2);
 void	ft_swap_content(char **s1, char **s2);
 int		ft_is_str(char c, char *s);
 char	**ft_envp_to_char(t_envp *env);
-void	ft_print_tab(char **tab);
+int		ft_var_len(char *s, int brace_flag);
 
 // expand
 int		ft_expand(t_cmd *node, t_envp **env);
-int		ft_cmd_len(char *s, t_envp **env, int *i);
 // exec
 void	ft_exec(save_struct *t_struct, char **envp);
 int		ft_exec_single_cmd(save_struct *t_struct, char **envp);
@@ -103,10 +101,11 @@ int		ft_exec_tree(t_ast *root);
 int		exec_leaf(t_ast *root, char **envp, t_ast *save_root, int return_value,
 			save_struct *t_struct);
 void	ft_parse_error(t_cmd *cmd);
-
-// redir
 int		redir_out(t_cmd *cmd);
-int		redir_in(t_cmd *cmd);
+int redir_in(t_cmd *cmd);
+void apply_redir(t_cmd *cmd);
+int	ft_execve_single_cmd(t_cmd *cmd, char **envp, save_struct *t_struct);
+void manage_heredoc(t_cmd *cmd);
 
 // BUILTINS
 int		ft_dispatch_builtin(char **cmd, save_struct *t_struct);

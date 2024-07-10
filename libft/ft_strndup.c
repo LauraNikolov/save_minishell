@@ -6,7 +6,7 @@
 /*   By: melmarti <melmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:21:07 by melmarti          #+#    #+#             */
-/*   Updated: 2024/05/02 16:49:50 by melmarti         ###   ########.fr       */
+/*   Updated: 2024/06/25 15:16:03 by melmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ char	*ft_strndup(char *src, int n)
 	char	*dest;
 
 	if (!src)
+		return (0);
+	if (!src[0])
 		return (0);
 	i = 0;
 	dest = malloc(sizeof(char) * (n + 1));

@@ -87,7 +87,6 @@ int	ft_expand(t_cmd *node, t_envp **env)
 			if (ft_is_char(node->cmd[i], '$') && node->expand_flag)
 			{
 				ft_safe_malloc(&exp, ft_expand_len(node->cmd[i], NULL, 0, env));
-				// printf ("exp_char = %c , expand_len = %d\n", exp[ft_expand_len(node->cmd[i], NULL, 0, env) - 1], ft_expand_len(node->cmd[i], NULL, 0, env));
 				exp[ft_expand_len(node->cmd[i], NULL, 0, env)] = '\0';
 				ft_expand_len(node->cmd[i], &exp, 1, env);
 				free(node->cmd[i]);

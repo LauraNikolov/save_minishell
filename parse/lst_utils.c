@@ -193,27 +193,27 @@ void	add_to_envp_lst(t_envp **head, t_envp *new_node)
 		return ;
 	}
 	last = lst_envp_last(*head);
+	new_node->prev = last;
 	last->next = new_node;
 }
-t_envp	*create_envp_node(char *var, int flag)
+t_envp	*create_envp_node(char *var, int print_flag)
 {
 	t_envp	*envp;
 	int		i;
 
+	envp = NULL;
 	envp = malloc(sizeof(t_envp));
-	if (!envp)
+	if (!envp || !var)
 		return (NULL);
 	i = 0;
 	while (var[i] && var[i] != '=')
 		i++;
-	if (flag)
-		envp->var_name = ft_strndup(var, i + 1);
-	else
-		envp->var_name = ft_strndup(var, i);
-	if (var && !var[i + 1])
+	envp->var_name = ft_strndup(var, i);
+	if (!var[i])
 		envp->var_value = NULL;
-	else
+	else if (var[i + 1])
 		envp->var_value = ft_strdup(&var[i + 1]);
+	envp->print_flag = print_flag;
 	envp->next = NULL;
 	envp->prev = NULL;
 	return (envp);
