@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 20:43:21 by lauranicolo       #+#    #+#             */
-/*   Updated: 2024/07/11 12:02:31 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/12 14:11:12 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -254,7 +254,15 @@ void apply_redir(t_cmd *cmd)
 
 // Après la boucle, assignez le dernier fd_in et fd_out à cmd->std_in et cmd->std_out respectivement
 if (fd_in != -1)
+{
+    if(cmd->std_in != 0)
+        close(cmd->std_in);
     cmd->std_in = fd_in;
+}
 if (fd_out != -1)
+{
+    if(cmd->std_out != 1)
+        close(cmd->std_out);
     cmd->std_out = fd_out;
+}
 }

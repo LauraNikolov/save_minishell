@@ -6,14 +6,8 @@ libft
 lo4
 log
 log1
-log2
-log3
 log4
 log5
-log6
-log7
-log8
-ls
 main.c
 main.o
 Makefile

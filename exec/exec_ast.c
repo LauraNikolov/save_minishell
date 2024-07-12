@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 18:33:30 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/11 12:17:58 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/12 14:17:10 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,6 +200,8 @@ int	exec_leaf(t_ast *root, char **envp, t_ast *save_root, int return_value,
 					save_root);
 			if (root == save_root || (root->parent == save_root && root->parent->cmd->type != PIPE))
 			{
+				if(root->cmd->prev_fd != -1)
+					close(root->cmd->prev_fd);
 				pid = 0;
 				// int i = get_nbr_of_pipe(save_root->cmd);
 				while (pid != -1)
@@ -356,6 +358,8 @@ void	ft_handle_ast_recursive(t_ast *root, char **envp, t_ast *save_root,
 		// read_pipe(root->left->cmd->prev_fd);
 		if (root->left->cmd->type == PIPE)
 		{
+			if(root->cmd->prev_fd != -1)
+					close(root->cmd->prev_fd);
 			int status;
 			int pid;
 			pid = 0;
@@ -377,6 +381,8 @@ void	ft_handle_ast_recursive(t_ast *root, char **envp, t_ast *save_root,
 	{
 		if (root->left->cmd->type == PIPE)
 		{
+			if(root->cmd->prev_fd != -1)
+					close(root->cmd->prev_fd);
 			int status;
 			int pid;
 			pid = 0;
@@ -420,6 +426,9 @@ void	ft_handle_exec(t_ast *root, char **envp, t_ast *save_root,
 				save_root);
 		if (root == save_root || root->parent == save_root)
 		{
+
+			if(root->cmd->prev_fd != -1)
+					close(root->cmd->prev_fd);
 			int status;
 			int pid;
 			pid = 0;
@@ -436,6 +445,8 @@ void	ft_handle_exec(t_ast *root, char **envp, t_ast *save_root,
 	{
 		if (root->left->cmd->type == PIPE)
 		{
+			if(root->cmd->prev_fd != -1)
+					close(root->cmd->prev_fd);
 			int status;
 			int pid;
 			pid = 0;
@@ -458,6 +469,8 @@ void	ft_handle_exec(t_ast *root, char **envp, t_ast *save_root,
 	{
 		if (root->left->cmd->type == PIPE)
 		{
+			if(root->cmd->prev_fd != -1)
+					close(root->cmd->prev_fd);
 			int status;
 			int pid;
 			pid = 0;

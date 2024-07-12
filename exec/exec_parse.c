@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 11:56:13 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/10 17:45:57 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/12 14:17:42 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void close_fds(t_cmd *cmd_list)
 {
     t_cmd *current = cmd_list; // Remplacez t_cmd par le type de votre structure de commande
 
-    while (current != NULL && current->next)
+    while (current)
     {
         // Ferme std_out si ce n'est pas la sortie standard
         if (current->std_out != 1)
