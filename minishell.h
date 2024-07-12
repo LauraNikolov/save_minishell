@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lauranicoloff <lauranicoloff@student.42    +#+  +:+       +#+        */
+/*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 14:41:19 by lauranicolo       #+#    #+#             */
-/*   Updated: 2024/06/26 15:21:06 by lauranicolo      ###   ########.fr       */
+/*   Updated: 2024/07/10 17:45:14 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,11 +108,11 @@ int	ft_execve_single_cmd(t_cmd *cmd, char **envp, save_struct *t_struct);
 void manage_heredoc(t_cmd *cmd);
 
 // BUILTINS
-int		ft_dispatch_builtin(char **cmd, save_struct *t_struct);
+int		ft_dispatch_builtin(t_cmd *cmd, save_struct *t_struct);
 int		ft_export(char **var, t_envp **env);
 int		ft_unset(char **var, t_envp **env);
 int		ft_env(t_envp **envp);
-int		ft_echo(char **cmd, t_envp **env);
+int		ft_echo(t_cmd *cmd, t_envp **env);
 int		ft_exit(char **code);
 int		ft_print_envp(t_envp **envp);
 int		ft_pwd(t_envp **envp);

@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 11:56:13 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/10 15:23:45 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/10 17:45:57 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	ft_exec_single_cmd(save_struct *t_struct, char **envp)
 	int return_value;
 	pid_t pid;
 
-	if ((return_value = ft_dispatch_builtin(t_struct->cmd->cmd, t_struct)) !=
+	if ((return_value = ft_dispatch_builtin(t_struct->cmd, t_struct)) !=
 		-1)
 	{
 		return (return_value);

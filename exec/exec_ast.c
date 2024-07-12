@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 18:33:30 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/10 15:22:02 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/11 12:17:58 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int	ft_execve_single_cmd(t_cmd *cmd, char **envp, save_struct *t_struct)
 
 	(void)t_struct;
 	return_value = 0;
-	if ((return_value = ft_dispatch_builtin(cmd->cmd, t_struct)) != -1)
+	if ((return_value = ft_dispatch_builtin(cmd, t_struct)) != -1)
 		return (return_value);
 	pid = fork();
 	if (pid == -1)
@@ -57,8 +57,7 @@ int	ft_execve_single_cmd(t_cmd *cmd, char **envp, save_struct *t_struct)
 		}
 		if (execve(cmd->path, cmd->cmd, envp) == -1)
 			{
-				printf("%s, %s couco\n", cmd->path, cmd->cmd[0]);
-				//ft_parse_error(cmd);
+				ft_parse_error(cmd);
 			}
 			
 		exit(0);
@@ -124,7 +123,7 @@ int	ft_execve_pipe(t_cmd *cmd, char **envp, t_ast *root, save_struct *t_struct,
 		// Fermer les descripteurs de pipe inutilisés dans le processus enfant
 		close(root->cmd->pipe[0]);
 		// ! check builting
-		if ((return_value = ft_dispatch_builtin(cmd->cmd, t_struct)) != -1)
+		if ((return_value = ft_dispatch_builtin(cmd, t_struct)) != -1)
 			exit(return_value);
 		else
 		{

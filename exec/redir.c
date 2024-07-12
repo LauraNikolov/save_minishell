@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redir.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lauranicoloff <lauranicoloff@student.42    +#+  +:+       +#+        */
+/*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 20:43:21 by lauranicolo       #+#    #+#             */
-/*   Updated: 2024/07/03 18:16:48 by lauranicolo      ###   ########.fr       */
+/*   Updated: 2024/07/11 12:02:31 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,6 @@ void manage_heredoc(t_cmd *cmd)
 
 int redir_in(t_cmd *cmd)
 {
-    dprintf(2, "koukou\n");
     int fd;
     //char *last_redir;
     t_redir *current = cmd->redir;
@@ -141,46 +140,46 @@ int redir_in(t_cmd *cmd)
     return(fd);
 }
 
-int redir_out(t_cmd *cmd)
-{
-    int fd;
-    //char *last_redir;
-    t_redir *current = cmd->redir;
-    t_redir *save = cmd->redir;
+// int redir_out(t_cmd *cmd)
+// {
+//     int fd;
+//     //char *last_redir;
+//     t_redir *current = cmd->redir;
+//     t_redir *save = cmd->redir;
 
-    fd = -1;
-    if(!cmd->redir)
-        return(-1);
-    else
-    {
-        while(current)
-        {
-            if(current->type == R_OUT)
-            { 
-                fd = open(current->next->redir, O_WRONLY | O_TRUNC | O_CREAT, 0644);
-            }
-            else if(current->type == R_APPEND)
-                fd = open(current->next->redir, O_WRONLY| O_APPEND | O_CREAT, 0644);
-            else
-            {
-                current = current->next;
-                continue;
-            }
-            if(fd == -1)
-            {
-                perror("minishell");
-                return(-1);
-            }
-            if(!current->next->next)
-                break;
-            else
-                close(fd);
-            current = current->next->next;
-        }
-    }
-     cmd->redir = save;
-    return(fd);
-}
+//     fd = -1;
+//     if(!cmd->redir)
+//         return(-1);
+//     else
+//     {
+//         while(current)
+//         {
+//             if(current->type == R_OUT)
+//             { 
+//                 fd = open(current->next->redir, O_WRONLY | O_TRUNC | O_CREAT, 0644);
+//             }
+//             else if(current->type == R_APPEND)
+//                 fd = open(current->next->redir, O_WRONLY| O_APPEND | O_CREAT, 0644);
+//             else
+//             {
+//                 current = current->next;
+//                 continue;
+//             }
+//             if(fd == -1)
+//             {
+//                 perror("minishell");
+//                 return(-1);
+//             }
+//             if(!current->next->next)
+//                 break;
+//             else
+//                 close(fd);
+//             current = current->next->next;
+//         }
+//     }
+//      cmd->redir = save;
+//     return(fd);
+// }
 
 int check_redir_in(t_redir *redir)
 {

@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 15:45:40 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/10 13:21:31 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/11 12:02:22 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,6 @@ int	count_parenthesis(t_cmd *node)
 			count--;
 		current = current->next;
 	}
-	dprintf(2, "count_parenthesis: %d\n", count);
 	return (count);
 }
 t_ast	*build_ast_recursive(t_cmd *start, t_cmd *end, t_ast *parent)
