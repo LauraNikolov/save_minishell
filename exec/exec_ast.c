@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_ast.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lauranicoloff <lauranicoloff@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 18:33:30 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/12 19:01:26 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/13 11:02:20 by lauranicolo      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,19 +19,12 @@ t_cmd *get_last_cmd(t_ast *node) {
     if (node == NULL) {
         return NULL; // Arbre vide ou fin de branche
     }
-
-    // Si le nœud actuel est une feuille (n'a pas d'enfants), retournez le nœud de commande
     if (node->left == NULL && node->right == NULL) {
         return node->cmd; // Retourne la commande du nœud actuel
     }
-
-    // Si le nœud a un enfant à droite, continuez à parcourir vers la droite
     if (node->right != NULL) {
         return get_last_cmd(node->right);
     }
-
-    // Si le nœud n'a pas d'enfant à droite mais a un enfant à gauche, continuez à parcourir vers la gauche
-    // Cela peut arriver dans des cas d'arbres irréguliers
     return get_last_cmd(node->left);
 }
 
@@ -41,7 +34,6 @@ int get_return_code(t_cmd *cmd)
 	int return_value;
 	int status;
 
-	dprintf(2, "cmd == %s\n", cmd->cmd[0]);
 	return_value = 0;
 	status = 0;
 	waitpid(cmd->pid, &status, 0);
@@ -427,7 +419,7 @@ void	ft_handle_ast_recursive(t_ast *root, char **envp, t_ast *save_root,
 void	ft_handle_exec(t_ast *root, char **envp, t_ast *save_root,
 		int *return_value, save_struct *t_struct)
 {
-	dprintf(2, "root->cmd->type == %d\n", root->cmd->type);
+	//dprintf(2, "root->cmd->type == %d\n", root->cmd->type);
 	if (root->cmd->type == PIPE)
 	{
 		pipe(root->cmd->pipe);
@@ -442,7 +434,7 @@ void	ft_handle_exec(t_ast *root, char **envp, t_ast *save_root,
 				save_root);
 		if(root == save_root || root->parent->cmd->type == OR || root->parent->cmd->type == AND)
 		{
-			print_ast(root, 0, '|');
+			//print_ast(root, 0, '|');
 			if(root->cmd->prev_fd != -1)
 					close(root->cmd->prev_fd);
 			*return_value = get_return_code(get_last_cmd(root));
@@ -523,7 +515,7 @@ void	ft_handle_exec(t_ast *root, char **envp, t_ast *save_root,
 int	exec_ast_recursive(t_ast *root, char **envp, t_ast *save_root,
 		int return_value, save_struct *t_struct)
 {
-	print_ast(root, 0, '|');
+	//print_ast(root, 0, '|');
 	if (root == NULL)
 		return (return_value);
 	if (root->left->cmd->type == PIPE || root->left->cmd->type == AND
@@ -537,13 +529,13 @@ int	exec_ast_recursive(t_ast *root, char **envp, t_ast *save_root,
 		if (root->right->cmd->type == PIPE || root->right->cmd->type == AND
 			|| root->right->cmd->type == OR)
 		{
-			dprintf(2, "ici\n");
+			//dprintf(2, "ici\n");
 			ft_handle_ast_recursive(root, envp, save_root, &return_value,
 				t_struct);
 		}
 		else
 		{	
-			dprintf(2, "la\n");
+			//dprintf(2, "la\n");
 			ft_handle_exec(root, envp, save_root, &return_value, t_struct);
 		}
 	}
