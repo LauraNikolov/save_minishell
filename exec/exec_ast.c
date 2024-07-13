@@ -6,7 +6,7 @@
 /*   By: lauranicoloff <lauranicoloff@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 18:33:30 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/13 13:54:26 by lauranicolo      ###   ########.fr       */
+/*   Updated: 2024/07/13 17:25:00 by lauranicolo      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ int	ft_execve_single_cmd(t_cmd *cmd, char ***envp, save_struct *t_struct)
 	return_value = 0;
 	if ((test = ft_dispatch_builtin(cmd, t_struct)) != -1)
 	{
-		dprintf(2, "once\n");
 		//int i = 0;
 		//char **current = *envp;
 		//while(current[i])

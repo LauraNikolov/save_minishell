@@ -79,13 +79,7 @@ int	ft_expand(t_cmd *node, t_envp **env)
 	int		i;
 	char	*exp;
 
-
-	dprintf(2, "\n\nexpand == ");
-	ft_print_envp(env);
-	while (node)
-	{
 		i = -1;
-		dprintf(2, "before export == %s\n", node->cmd[1]);
 		while (node->cmd[++i])
 		{
 			if (ft_is_char(node->cmd[i], '$') && node->expand_flag)
@@ -96,10 +90,8 @@ int	ft_expand(t_cmd *node, t_envp **env)
 				free(node->cmd[i]);
 				node->cmd[i] = ft_strdup(exp);
 				free(exp);
+				exp = NULL;
 			}
 		}
-		dprintf(2, "after export == %s\n", node->cmd[1]);
-		node = node->next;
-	}
 	return (0);
 }
