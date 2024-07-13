@@ -6,7 +6,7 @@
 /*   By: lauranicoloff <lauranicoloff@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 18:33:30 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/13 11:02:20 by lauranicolo      ###   ########.fr       */
+/*   Updated: 2024/07/13 12:33:05 by lauranicolo      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,16 +57,23 @@ int	get_nbr_of_pipe(t_cmd *cmd)
 	return (i);
 }
 
-int	ft_execve_single_cmd(t_cmd *cmd, char **envp, save_struct *t_struct)
+int	ft_execve_single_cmd(t_cmd *cmd, char ***envp, save_struct *t_struct)
 {
 	int		return_value;
 	int		status;
-	int test;
+	int 	test;
+	char **new_envp;
 
 	(void)t_struct;
 	return_value = 0;
 	if ((test = ft_dispatch_builtin(cmd, t_struct)) != -1)
+	{
+		new_envp = ft_envp_to_char(t_struct->envp);
+		ft_free_tab(*envp);
+		envp = NULL;
+		envp = &new_envp;
 		return (test);
+	}
 	cmd->pid = fork();
 	if (cmd->pid == -1)
 	{
@@ -85,7 +92,7 @@ int	ft_execve_single_cmd(t_cmd *cmd, char **envp, save_struct *t_struct)
 			dup2(cmd->std_out, STDOUT_FILENO);
 			close(cmd->std_out);
 		}
-		execve(cmd->path, cmd->cmd, envp);		
+		execve(cmd->path, cmd->cmd, *envp);		
 		exit(-1);
 	}
 	else
@@ -152,7 +159,6 @@ int	ft_execve_pipe(t_cmd *cmd, char **envp, t_ast *root, save_struct *t_struct,
 		}
 		// Fermer les descripteurs de pipe inutilisés dans le processus enfant
 		close(root->cmd->pipe[0]);
-		// ! check builting
 		if ((test = ft_dispatch_builtin(cmd, t_struct)) != -1)
 			exit(test);
 		else
@@ -236,21 +242,21 @@ int	exec_leaf(t_ast *root, char **envp, t_ast *save_root, int return_value,
 		else if (root->cmd->type == AND)
 		{
 			apply_redir(cmd1);
-			return_value = ft_execve_single_cmd(cmd1, envp, t_struct);
+			return_value = ft_execve_single_cmd(cmd1, &envp, t_struct);
 			if (return_value == 0)
 			{
 				apply_redir(cmd2);
-				return_value = ft_execve_single_cmd(cmd2, envp, t_struct);
+				return_value = ft_execve_single_cmd(cmd2, &envp, t_struct);
 			}
 		}
 		else if (root->cmd->type == OR)
 		{
 			apply_redir(cmd1);
-			return_value = ft_execve_single_cmd(cmd1, envp, t_struct);
+			return_value = ft_execve_single_cmd(cmd1, &envp, t_struct);
 			if (return_value != 0)
 			{
 				apply_redir(cmd2);
-				return_value = ft_execve_single_cmd(cmd2, envp, t_struct);
+				return_value = ft_execve_single_cmd(cmd2, &envp, t_struct);
 			}
 		}
 	}
@@ -305,7 +311,7 @@ int	ft_and_recursive(t_ast *root, char **envp, t_ast *save_root,
 		if (return_value == 0)
 		{
 			apply_redir(root->right->cmd);
-			return_value = ft_execve_single_cmd(root->right->cmd, envp,
+			return_value = ft_execve_single_cmd(root->right->cmd, &envp,
 					t_struct);
 		}
 		else
@@ -339,7 +345,7 @@ int	ft_or_recursive(t_ast *root, char **envp, t_ast *save_root,
 		if (return_value != 0)
 		{
 			apply_redir(root->right->cmd);
-			return_value = ft_execve_single_cmd(root->right->cmd, envp,
+			return_value = ft_execve_single_cmd(root->right->cmd, &envp,
 					t_struct);
 		}
 		else
@@ -362,7 +368,7 @@ void	ft_handle_ast_recursive(t_ast *root, char **envp, t_ast *save_root,
 		if(root->left->cmd->type == WORD)
 		{
 			apply_redir(root->left->cmd);
-			*return_value = ft_execve_single_cmd(root->left->cmd, envp, t_struct);
+			*return_value = ft_execve_single_cmd(root->left->cmd, &envp, t_struct);
 		}	
 	}
 
@@ -478,7 +484,7 @@ void	ft_handle_exec(t_ast *root, char **envp, t_ast *save_root,
 		if (*return_value == 0)
 		{
 			apply_redir(root->right->cmd);
-			*return_value = ft_execve_single_cmd(root->right->cmd, envp,
+			*return_value = ft_execve_single_cmd(root->right->cmd, &envp,
 					t_struct);
 		}
 	}
@@ -503,7 +509,7 @@ void	ft_handle_exec(t_ast *root, char **envp, t_ast *save_root,
 			if (*return_value != 0)
 			{
 				apply_redir(root->right->cmd);
-				*return_value = ft_execve_single_cmd(root->right->cmd, envp,
+				*return_value = ft_execve_single_cmd(root->right->cmd, &envp,
 						t_struct);
 			}
 		}

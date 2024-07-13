@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lauranicoloff <lauranicoloff@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 14:41:19 by lauranicolo       #+#    #+#             */
-/*   Updated: 2024/07/10 17:45:14 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/13 12:13:46 by lauranicolo      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ void	ft_parse_error(t_cmd *cmd);
 int		redir_out(t_cmd *cmd);
 int redir_in(t_cmd *cmd);
 void apply_redir(t_cmd *cmd);
-int	ft_execve_single_cmd(t_cmd *cmd, char **envp, save_struct *t_struct);
+int	ft_execve_single_cmd(t_cmd *cmd, char ***envp, save_struct *t_struct);
 void manage_heredoc(t_cmd *cmd);
 
 // BUILTINS
