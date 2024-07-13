@@ -70,6 +70,6 @@ char	**ft_envp_to_char(t_envp *env)
 		env = env->next;
 	}
 	envp[j] = NULL;
-	ft_free_tab(envp);
+	//ft_free_tab(envp);
 	return (envp);
 }

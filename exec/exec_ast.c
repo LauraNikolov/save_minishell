@@ -6,7 +6,7 @@
 /*   By: lauranicoloff <lauranicoloff@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 18:33:30 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/13 12:33:05 by lauranicolo      ###   ########.fr       */
+/*   Updated: 2024/07/13 13:54:26 by lauranicolo      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,10 +68,25 @@ int	ft_execve_single_cmd(t_cmd *cmd, char ***envp, save_struct *t_struct)
 	return_value = 0;
 	if ((test = ft_dispatch_builtin(cmd, t_struct)) != -1)
 	{
+		dprintf(2, "once\n");
+		//int i = 0;
+		//char **current = *envp;
+		//while(current[i])
+		//{
+			//dprintf(2, "char **%s\n", current[i]);
+			//i++;
+		//}//
+		//dprintf(2, "new env\n");
+		//ft_print_envp(&t_struct->envp);
+		//dprintf(2, "\n\n");
 		new_envp = ft_envp_to_char(t_struct->envp);
+		if (new_envp == NULL)
+        {
+            // Gérer l'erreur de conversion
+            return (-1);
+        }
 		ft_free_tab(*envp);
-		envp = NULL;
-		envp = &new_envp;
+		*envp = new_envp;
 		return (test);
 	}
 	cmd->pid = fork();
