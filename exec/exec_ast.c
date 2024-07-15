@@ -6,7 +6,7 @@
 /*   By: lauranicoloff <lauranicoloff@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 18:33:30 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/13 17:25:00 by lauranicolo      ###   ########.fr       */
+/*   Updated: 2024/07/13 18:30:26 by lauranicolo      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -535,7 +535,7 @@ void	ft_handle_exec(t_ast *root, char **envp, t_ast *save_root,
 int	exec_ast_recursive(t_ast *root, char **envp, t_ast *save_root,
 		int return_value, save_struct *t_struct)
 {
-	//print_ast(root, 0, '|');
+	print_ast(root, 0, '|');
 	if (root == NULL)
 		return (return_value);
 	if (root->left->cmd->type == PIPE || root->left->cmd->type == AND

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redir.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lauranicoloff <lauranicoloff@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 20:43:21 by lauranicolo       #+#    #+#             */
-/*   Updated: 2024/07/12 14:11:12 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/13 17:39:35 by lauranicolo      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,10 +215,10 @@ int check_redir_out(t_redir *redir)
     }
     return(1);
 }
-void apply_redir(t_cmd *cmd)
+int apply_redir(t_cmd *cmd)
 {
     if (!cmd->redir)
-        return;
+        return(0);
     t_redir *current = cmd->redir;
     int fd_in = -1, fd_out = -1;
 
@@ -229,7 +229,7 @@ void apply_redir(t_cmd *cmd)
         fd_in = open(current->next->redir, O_RDONLY);
         if (fd_in == -1) {
             perror("minishell");
-            return;
+            return(-1);
         }
     } else if (current->type == R_OUT) {
         if (fd_out != -1) // Si ce n'est pas le premier fd_out, fermez-le
@@ -237,7 +237,7 @@ void apply_redir(t_cmd *cmd)
         fd_out = open(current->next->redir, O_WRONLY | O_TRUNC | O_CREAT, 0644);
         if (fd_out == -1) {
             perror("minishell");
-            return;
+            return(-1);
         }
     } else if (current->type == R_APPEND) {
         if (fd_out != -1) // Si ce n'est pas le premier fd_out, fermez-le
@@ -245,7 +245,7 @@ void apply_redir(t_cmd *cmd)
         fd_out = open(current->next->redir, O_WRONLY | O_APPEND | O_CREAT, 0644);
         if (fd_out == -1) {
             perror("minishell");
-            return;
+            return(-1);
         }
     }
     // Avance de deux nœuds pour passer au prochain type de redirection
@@ -265,4 +265,6 @@ if (fd_out != -1)
         close(cmd->std_out);
     cmd->std_out = fd_out;
 }
+
+    return(0);
 }

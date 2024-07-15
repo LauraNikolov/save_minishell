@@ -6,7 +6,7 @@
 /*   By: lauranicoloff <lauranicoloff@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 14:41:19 by lauranicolo       #+#    #+#             */
-/*   Updated: 2024/07/13 16:32:16 by lauranicolo      ###   ########.fr       */
+/*   Updated: 2024/07/13 17:36:51 by lauranicolo      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ int		exec_leaf(t_ast *root, char **envp, t_ast *save_root, int return_value,
 void	ft_parse_error(t_cmd *cmd);
 int		redir_out(t_cmd *cmd);
 int redir_in(t_cmd *cmd);
-void apply_redir(t_cmd *cmd);
+int apply_redir(t_cmd *cmd);
 int	ft_execve_single_cmd(t_cmd *cmd, char ***envp, save_struct *t_struct);
 void manage_heredoc(t_cmd *cmd);
 
