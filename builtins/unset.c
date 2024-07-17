@@ -42,5 +42,5 @@ int	ft_unset(char **var, t_envp **env)
 		}
 		curr = temp;
 	}
-	return (0);
+	return (ft_return_code(ft_strdup("0"), env));
 }

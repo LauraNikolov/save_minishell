@@ -7,8 +7,10 @@ int	ft_get_path(t_cmd *node)
 	char	**bin;
 	int		i;
 
-	path = getenv("PATH");       // if no environment TODO !
-	bin = ft_split(path, ":"); // split les paths
+	if (!node->cmd)
+		return (0);
+	path = getenv("PATH");
+	bin = ft_split(path, ":");
 	i = 0;
 	while (bin[i])
 	{

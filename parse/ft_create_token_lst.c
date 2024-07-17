@@ -28,13 +28,13 @@ int	ft_inside_quote(char *s, char **cmd, int *cmd_index, save_struct *t_struct)
 		if (s[i] == ' ')
 		{
 			(*cmd)[*cmd_index] = '%';
-			strcat(t_struct->save_spaces, "1");
+			ft_strcat(t_struct->save_spaces, "1");
 			(*cmd_index)++;
 		}
 		else
 		{
 			(*cmd)[*cmd_index] = s[i];
-			strcat(t_struct->save_spaces, "0");
+			ft_strcat(t_struct->save_spaces, "0");
 			(*cmd_index)++;
 		}
 		i++;
@@ -42,36 +42,51 @@ int	ft_inside_quote(char *s, char **cmd, int *cmd_index, save_struct *t_struct)
 	return (i + 1);
 }
 
-t_redir	*ft_redir(char *s, int *i, int len)
-{
-	t_redir	*redir;
-	char	*cmd;
-	int		infile;
-	int		j;
 
-	j = 0;
-	infile = 0;
-	redir = NULL;
-	*i += ft_check_double_symbols(&s[*i], &cmd);
-	if (!s[*i])
-		return (NULL);
-	add_to_redir_lst(&redir, create_redir_node(cmd));
-	while (s[*i] && s[*i] == ' ' && *i < len)
-		(*i)++;
-	while (s[*i + infile] && ft_isalnum(s[*i + infile]) && *i + infile < len)
-		infile++;
-	free(cmd);
-	if (ft_safe_malloc(&cmd, infile) == -1)
-		return (NULL);
-	while (s[*i] && j < infile && *i < len)
-		cmd[j++] = s[(*i)++];
-	cmd[j] = '\0';
-	add_to_redir_lst(&redir, create_redir_node(cmd));
-	free(cmd);
-	return (redir);
+t_redir    *ft_redir(char *s, int *i, int len)
+{
+    t_redir    *redir;
+    char    *cmd;
+    int        infile;
+    int        j;
+
+    j = 0;
+    infile = 0;
+    redir = NULL;
+    while (*i < len)
+    {
+        if (ft_is_str(s[*i], "><"))
+        {
+            *i += ft_check_double_symbols(&s[*i], &cmd);
+            add_to_redir_lst(&redir, create_redir_node(cmd));
+            free(cmd);
+        }
+        while (*i < len && s[*i] == ' ')
+            (*i)++;
+        if (s[*i] == '\"' || s[*i] == '\'')
+                (*i)++;
+        if (!ft_is_str(s[*i], "><"))
+        {
+            while (s[*i + infile] && !ft_is_str(s[*i + infile], "><") && s[*i
+                + infile] != ' ')
+                infile++;
+            if (s[*i - 1] == '\"' || s[*i - 1] == '\'')
+                infile--;
+            if (ft_safe_malloc(&cmd, infile + 1) == -1)
+                return (ft_free_redir(redir), NULL);
+            while (j < infile)
+                cmd[j++] = s[(*i)++];
+            cmd[j] = '\0';
+            add_to_redir_lst(&redir, create_redir_node(cmd));
+            free(cmd);
+            (*i)--;
+            break ;
+        }
+    }
+    return (redir);
 }
 
-t_redir	*ft_handle_quote(char *s, char **cmd, int len, save_struct *t_struct)
+t_redir	*ft_handle_quote(char *s, char **cmd, int len, save_struct *t_struct, int bufflen)
 {
 	int		i;
 	int		cmd_index;
@@ -79,7 +94,7 @@ t_redir	*ft_handle_quote(char *s, char **cmd, int len, save_struct *t_struct)
 
 	redir = NULL;
 	if (!t_struct->save_spaces)
-		ft_safe_malloc(&(t_struct->save_spaces), ft_quote_len(s, len) + 1);
+		ft_safe_malloc(&(t_struct->save_spaces), bufflen + 1);
 	ft_safe_malloc(cmd, ft_quote_len(s, len) + 1);
 	cmd_index = 0;
 	i = -1;
@@ -93,12 +108,11 @@ t_redir	*ft_handle_quote(char *s, char **cmd, int len, save_struct *t_struct)
 		{
 			(*cmd)[cmd_index] = s[i];
 			if ((*cmd)[cmd_index] != ' ')
-				strcat(t_struct->save_spaces, "3");
+				ft_strcat(t_struct->save_spaces, "3");
 			else
-				strcat(t_struct->save_spaces, "2");
+				ft_strcat(t_struct->save_spaces, "2");
 			cmd_index++;
 		}
-		(*cmd)[cmd_index] = '\0';
 	}
 	return (redir);
 }
@@ -143,13 +157,12 @@ static int	ft_get_symb(save_struct *t_struct, char *buff, char **cmd)
 	int	len;
 	int	i;
 
-	len = 0;
 	i = 0;
 	len = ft_check_double_symbols(buff, cmd);
-	add_to_lst(&(t_struct->cmd), create_cmd_node(NULL, *cmd, buff[-1]));
+	add_to_lst(&(t_struct->cmd), create_cmd_node(NULL, cmd, buff[-1]));
 	i = len;
 	while (i--)
-		strcat(t_struct->save_spaces, "0");
+		ft_strcat(t_struct->save_spaces, "0");
 	return (len);
 }
 
@@ -162,9 +175,9 @@ void	ft_create_token_lst(char *buffer, save_struct *t_struct)
 
 	j = 0;
 	quote_flag = -1;
+	cmd = NULL;
 	while (buffer[j])
 	{
-		cmd = NULL;
 		len = 0;
 		while (((buffer[j] && quote_flag == 1)) || ((buffer[j]
 					&& !ft_is_str(buffer[j], "|()&") && quote_flag == -1)))
@@ -175,8 +188,9 @@ void	ft_create_token_lst(char *buffer, save_struct *t_struct)
 			len++;
 		}
 		add_to_lst(&(t_struct->cmd), create_cmd_node(ft_handle_quote(&buffer[j
-					- len], &cmd, len, t_struct), cmd, buffer[j - 1]));
+					- len], &cmd, len, t_struct, ft_strlen(buffer)), &cmd, buffer[j - 1]));
 		if (ft_is_str(buffer[j], "|()&"))
 			j += ft_get_symb(t_struct, &buffer[j], &cmd);
 	}
 }
+

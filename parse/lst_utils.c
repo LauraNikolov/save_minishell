@@ -30,20 +30,25 @@ void	ft_free_envp_lst(t_envp **lst)
 		free(curr);
 		curr = temp;
 	}
-	*lst = NULL;
+}
+
+void	ft_free_redir(t_redir *redir)
+{
+	t_redir	*tmp;
+
+	while (redir)
+	{
+		tmp = redir->next;
+		free(redir->redir);
+		free(redir);
+		redir = tmp;
+	}
 }
 
 void	ft_free_node(t_cmd *node)
 {
-	int	i;
-
-	i = 0;
-	while (node->cmd[i])
-	{
-		free(node->cmd[i]);
-		i++;
-	}
-	free(node->cmd);
+	if (node->cmd)
+		ft_free_tab(node->cmd);
 	free(node->path);
 	free(node);
 }
@@ -54,6 +59,8 @@ void	ft_free_lst(t_cmd *lst)
 	while (lst)
 	{
 		temp = lst->next;
+		if (lst->redir)
+			ft_free_redir(lst->redir);
 		ft_free_node(lst);
 		lst = temp;
 	}
@@ -90,11 +97,14 @@ void	ft_print_lst(t_cmd *node)
 	curr = node;
 	while (curr)
 	{
-		printf("\nCommande n%d = %s\n", command_num, curr->cmd[0]);
-		while (curr->cmd[i])
+		if (curr->cmd)
 		{
-			printf("Options n%d : %s\n", i, curr->cmd[i]);
-			i++;
+			printf("\nCommande n%d = %s\n", command_num, curr->cmd[0]);
+			while (curr->cmd[i])
+			{
+				printf("Options n%d : %s\n", i, curr->cmd[i]);
+				i++;
+			}
 		}
 		printf("Path = %s\n", curr->path);
 		if (curr->redir)
@@ -103,15 +113,15 @@ void	ft_print_lst(t_cmd *node)
 			while (curr_redir)
 			{
 				printf("redir = %s | type = ", curr_redir->redir);
-				if (curr_redir->type == 4)
+				if (curr_redir->type == 6)
 					printf(" R_IN\n");
 				else if (curr_redir->type == 0)
 					printf("INFILE\n");
-				else if (curr_redir->type == 5)
-					printf(" R_OUT\n");
-				else if (curr_redir->type == 6)
-					printf("R_APPEND\n");
 				else if (curr_redir->type == 7)
+					printf(" R_OUT\n");
+				else if (curr_redir->type == 8)
+					printf("R_APPEND\n");
+				else if (curr_redir->type == 9)
 					printf("HEREDOC\n");
 				curr_redir = curr_redir->next;
 			}
@@ -209,9 +219,8 @@ t_envp	*create_envp_node(char *var, int print_flag)
 	while (var[i] && var[i] != '=')
 		i++;
 	envp->var_name = ft_strndup(var, i);
-	if (!var[i])
-		envp->var_value = NULL;
-	else if (var[i + 1])
+	envp->var_value = NULL;
+	if (var[i + 1])
 		envp->var_value = ft_strdup(&var[i + 1]);
 	envp->print_flag = print_flag;
 	envp->next = NULL;
@@ -219,36 +228,42 @@ t_envp	*create_envp_node(char *var, int print_flag)
 	return (envp);
 }
 
-t_cmd	*create_cmd_node2(t_cmd *new_node, char *cmd)
+t_cmd	*create_cmd_node2(t_cmd *new_node, char **cmd)
 {
-	if (!ft_strcmp(cmd, "||"))
+	if (!ft_strcmp(*cmd, "||"))
 		new_node->type = OR;
-	else if (!ft_strcmp(cmd, "|"))
+	else if (!ft_strcmp(*cmd, "|"))
 		new_node->type = PIPE;
-	else if (!ft_strcmp(cmd, "&&"))
+	else if (!ft_strcmp(*cmd, "&&"))
 		new_node->type = AND;
-	else if (!ft_strcmp(cmd, "&"))
+	else if (!ft_strcmp(*cmd, "&"))
 		new_node->type = NO_TYPE;
-	else if (!ft_strcmp(cmd, "("))
+	else if (!ft_strcmp(*cmd, "("))
 		new_node->type = O_BRACKET;
-	else if (!ft_strcmp(cmd, ")"))
+	else if (!ft_strcmp(*cmd, ")"))
 		new_node->type = C_BRACKET;
 	else
 		new_node->type = WORD;
-	free(cmd);
+	free(*cmd);
+	cmd = NULL;
 	return (new_node);
 }
 
-t_cmd	*create_cmd_node(t_redir *redir, char *cmd, char c)
+t_cmd	*create_cmd_node(t_redir *redir, char **cmd, char c)
 {
 	t_cmd	*new_node;
+	int		i;
 
 	new_node = malloc(sizeof(t_cmd));
 	if (!new_node)
 		return (NULL);
-	new_node->cmd = NULL;
-	if (cmd)
-		new_node->cmd = ft_split(cmd, " ");
+	i = 0;
+	while ((*cmd)[i] && (*cmd)[i] == ' ')
+		i++;
+	if (ft_strlen(*cmd) == (size_t)i)
+		new_node->cmd = NULL;
+	else
+		new_node->cmd = ft_split(*cmd, " ");
 	new_node->redir = redir;
 	new_node->expand_flag = 0;
 	new_node->next = NULL;

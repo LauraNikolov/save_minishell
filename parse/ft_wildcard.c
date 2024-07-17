@@ -65,8 +65,11 @@ static char	**ft_cpy_match(int i, char **new_tab, char **cmd)
 			entry = readdir(dir);
 			while (entry)
 			{
-				if (ft_match(cmd[i], entry->d_name))
-					new_tab[j++] = ft_strdup(entry->d_name);
+				if (entry->d_name[0] != '.')
+				{
+					if (ft_match(cmd[i], entry->d_name))
+						new_tab[j++] = ft_strdup(entry->d_name);
+				}
 				entry = readdir(dir);
 			}
 			closedir(dir);
@@ -118,4 +121,5 @@ void	ft_wildcard(t_cmd **lst)
 			curr->cmd = ft_new_args(curr->cmd);
 		curr = curr->next;
 	}
+	
 }

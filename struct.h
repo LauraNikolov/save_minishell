@@ -9,19 +9,18 @@ typedef enum s_token_type
 	PIPE,
 	AND,
 	OR,
+	O_BRACKET,
+	C_BRACKET,
 	R_IN,
-	// INFILE,
 	R_OUT,
 	R_APPEND,
 	R_HEREDOC,
-	O_BRACKET,
-	C_BRACKET,
 	NO_TYPE,
 }					t_token_type;
 
 typedef struct s_cmd
 {
-	pid_t 			pid;
+	pid_t           pid;
 	char			**cmd;
 	char			*path;
 	int				prev_fd;

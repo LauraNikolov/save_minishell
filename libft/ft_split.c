@@ -6,16 +6,16 @@
 /*   By: melmarti <melmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 17:30:29 by melmarti          #+#    #+#             */
-/*   Updated: 2024/05/03 17:53:39 by melmarti         ###   ########.fr       */
+/*   Updated: 2024/07/11 18:07:31 by melmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-
+#include <string.h>
 
 char	*ft_split_substr(char *s, unsigned int start, size_t len)
 {
-	size_t		i;
+	size_t	i;
 	char	*str;
 
 	if (!s)
@@ -113,7 +113,7 @@ char	**ft_split(char *s, char *sep)
 
 	i = 0;
 	n = 0;
-	if (!s)
+	if (!s || !s[0])
 		return (NULL);
 	strs = (char **)malloc(sizeof(char *) * (ft_count_words(s, sep) + 1));
 	if (!strs)

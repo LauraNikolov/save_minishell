@@ -51,11 +51,9 @@ static void	ft_add_var(t_envp **env, char *var)
 {
 	t_envp	*curr;
 	int		i;
-	//int		print_flag;
 	int		flag;
 
 	flag = 0;
-	//print_flag = 0;
 	i = ft_strchr(var, '=');
 	if (i == -1)
 		i = ft_strlen(var);
@@ -96,29 +94,40 @@ static int	ft_fork_export(t_envp **env)
 	return (0);
 }
 
-int	ft_export(char **var, t_envp **env)
+int	ft_export(t_cmd *node, t_envp **env)
 {
 	int	i;
+	int	j;
 
+	char **var = node->cmd;
 	if (!env || !*var)
-	{
 		return (0);
-	}
 	if (!var[1])
 		return (ft_fork_export(env));
 	i = 1;
 	while (var[i])
 	{
-		if ((var[i][0] >= '0' && var[i][0] <= '9') || !ft_isalpha(var[i][0]))
+		j = 0;
+		if (var[i][0] == '=')
 		{
 			ft_putstr_cmd_fd("Minishell : export: `", 2, NULL, 2);
 			ft_putstr_cmd_fd(var[i], 2, NULL, 2);
 			ft_putstr_cmd_fd("': not a valid identifier", 2, NULL, 0);
-			ft_return_code("1", env);
+			return (ft_return_code(ft_strdup("1"), env));
 		}
-		else
-			ft_add_var(env, var[i]);
+		while (var[i][j] && var[i][j] != '=')
+		{
+			if (var[i][j] == '-' || !ft_isalpha(var[i][0]))
+			{
+				ft_putstr_cmd_fd("Minishell : export: `", 2, NULL, 2);
+				ft_putstr_cmd_fd(var[i], 2, NULL, 2);
+				ft_putstr_cmd_fd("': not a valid identifier", 2, NULL, 0);
+				return (ft_return_code(ft_strdup("1"), env));
+			}
+			j++;
+		}
+		ft_add_var(env, var[i]);
 		i++;
 	}
-	return (ft_return_code("0", env));
+	return (ft_return_code(ft_strdup("0"), env));
 }

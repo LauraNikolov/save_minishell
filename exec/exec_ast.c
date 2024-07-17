@@ -3,16 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   exec_ast.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lauranicoloff <lauranicoloff@student.42    +#+  +:+       +#+        */
+/*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 18:33:30 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/13 18:30:26 by lauranicolo      ###   ########.fr       */
+/*   Updated: 2024/07/17 18:13:36 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 #include <errno.h>
-
 
 
 t_cmd *get_last_cmd(t_ast *node) {
@@ -66,27 +65,25 @@ int	ft_execve_single_cmd(t_cmd *cmd, char ***envp, save_struct *t_struct)
 
 	(void)t_struct;
 	return_value = 0;
-	if ((test = ft_dispatch_builtin(cmd, t_struct)) != -1)
+	if(is_it_builtin(cmd) == 1)
 	{
-		//int i = 0;
-		//char **current = *envp;
-		//while(current[i])
-		//{
-			//dprintf(2, "char **%s\n", current[i]);
-			//i++;
-		//}//
-		//dprintf(2, "new env\n");
-		//ft_print_envp(&t_struct->envp);
-		//dprintf(2, "\n\n");
-		new_envp = ft_envp_to_char(t_struct->envp);
-		if (new_envp == NULL)
-        {
-            // Gérer l'erreur de conversion
-            return (-1);
-        }
-		ft_free_tab(*envp);
-		*envp = new_envp;
-		return (test);
+		if(apply_redir(cmd) == -1)
+			return(ft_return_code("1", &t_struct->envp));
+		//dprintf(2, "in == %d\n", cmd->std_in);
+		//dprintf(2, "out == %d\n", cmd->std_out);
+		if ((test = ft_dispatch_builtin(cmd, t_struct)) != -1)
+		{
+
+			new_envp = ft_envp_to_char(t_struct->envp);
+			if (new_envp == NULL)
+        	{
+            	// Gérer l'erreur de conversion
+            	return (-1);
+        	}
+			//ft_free_tab(*envp); echo hi >>./outfiles/outfile01 | echo bye 
+			*envp = new_envp;
+			return (test);
+		}
 	}
 	cmd->pid = fork();
 	if (cmd->pid == -1)
@@ -96,6 +93,8 @@ int	ft_execve_single_cmd(t_cmd *cmd, char ***envp, save_struct *t_struct)
 	}
 	if (cmd->pid == 0)
 	{
+		if(apply_redir(cmd) == -1)
+			exit(1);
 		if (cmd->std_in != STDIN_FILENO)
 		{
 			dup2(cmd->std_in, STDIN_FILENO);
@@ -106,7 +105,11 @@ int	ft_execve_single_cmd(t_cmd *cmd, char ***envp, save_struct *t_struct)
 			dup2(cmd->std_out, STDOUT_FILENO);
 			close(cmd->std_out);
 		}
-		execve(cmd->path, cmd->cmd, *envp);		
+		if(cmd->cmd)
+		{
+			if(execve(cmd->path, cmd->cmd, *envp) == -1)
+			ft_parse_error(cmd);	
+		}
 		exit(-1);
 	}
 	else
@@ -114,11 +117,7 @@ int	ft_execve_single_cmd(t_cmd *cmd, char ***envp, save_struct *t_struct)
 		status = 0;
 		waitpid(cmd->pid, &status, 0);
 		if (WIFEXITED(status))
-		{
-			if(status == -1)
-				ft_parse_error(cmd);
 			return_value = WEXITSTATUS(status);
-		}
 	}
 	return (return_value);
 }
@@ -161,6 +160,16 @@ int	ft_execve_pipe(t_cmd *cmd, char **envp, t_ast *root, save_struct *t_struct,
 	}
 	if (cmd->pid == 0)
 	{
+		if(apply_redir(cmd) == -1)
+		{
+			if(cmd->std_in != STDIN_FILENO)
+				close(cmd->std_in);
+			if(cmd->std_out != STDOUT_FILENO)
+				close(cmd->std_out);
+			close(root->cmd->pipe[0]);
+			close(root->cmd->pipe[1]);
+			exit(1);
+		}
 		if (cmd->std_in != STDIN_FILENO)
 		{
 			dup2(cmd->std_in, STDIN_FILENO);
@@ -221,7 +230,7 @@ int	exec_leaf(t_ast *root, char **envp, t_ast *save_root, int return_value,
 			else
 				cmd1->std_in = root->cmd->prev_fd;
 			cmd1->std_out = root->cmd->pipe[1];
-			apply_redir(cmd1);
+			//apply_redir(cmd1);
 			return_value = ft_execve_pipe(cmd1, envp, root, t_struct,
 					save_root);
 			// cmd2: stdin est la sortie du pipe précédent,
@@ -243,7 +252,7 @@ int	exec_leaf(t_ast *root, char **envp, t_ast *save_root, int return_value,
 					|| root->parent->cmd->type == AND)
 					cmd2->std_out = STDOUT_FILENO;
 			}
-			apply_redir(cmd2);
+			//apply_redir(cmd2);
 			return_value = ft_execve_pipe(cmd2, envp, root, t_struct,
 					save_root);
 			if (root == save_root || root->parent->cmd->type == OR || root->parent->cmd->type == AND)
@@ -535,7 +544,7 @@ void	ft_handle_exec(t_ast *root, char **envp, t_ast *save_root,
 int	exec_ast_recursive(t_ast *root, char **envp, t_ast *save_root,
 		int return_value, save_struct *t_struct)
 {
-	print_ast(root, 0, '|');
+	//print_ast(root, 0, '|');
 	if (root == NULL)
 		return (return_value);
 	if (root->left->cmd->type == PIPE || root->left->cmd->type == AND

@@ -10,7 +10,7 @@ BUILTINSDIR = builtins
 PARSE_SRCS = $(wildcard $(PARSEDIR)/*.c)
 BUILTINS_SRCS = $(wildcard $(BUILTINSDIR)/*.c)
 EXEC_SRCS = $(wildcard $(EXECDIR)/*.c)
-MAIN_SRCS = main.c \
+MAIN_SRCS = main.c
 
 PARSE_OBJS = $(PARSE_SRCS:.c=.o)
 BUILTINS_OBJS = $(BUILTINS_SRCS:.c=.o)
@@ -21,20 +21,24 @@ LIBFT = $(LIBFTDIR)/libft.a
 NAME = minishell
 
 $(LIBFT):
+	@echo "Compiling libft..."
 	@make -C $(LIBFTDIR)
 	@echo "Libft compiled successfully"
 
-$(NAME): $(PARSE_OBJS) $(BUILTINS_OBJS) $(EXEC_OBJS) $(MAIN_OBJS) | $(LIBFT)
+$(NAME): $(LIBFT) $(PARSE_OBJS) $(BUILTINS_OBJS) $(EXEC_OBJS) $(MAIN_OBJS)
+	@echo "Linking $(NAME)..."
 	@$(CC) $(CFLAGS) -o $@ $(PARSE_OBJS) $(BUILTINS_OBJS) $(EXEC_OBJS) $(MAIN_OBJS) -L$(LIBFTDIR) -lft $(LDFLAGS)
 	@echo "Compilation successful: $@"
 
 all: $(NAME)
 
 clean:
+	@echo "Cleaning object files..."
 	@rm -f $(PARSE_OBJS) $(BUILTINS_OBJS) $(EXEC_OBJS) $(MAIN_OBJS)
 	@make -C $(LIBFTDIR) clean
 
 fclean: clean
+	@echo "Removing binary and object files..."
 	@rm -f $(NAME)
 	@make -C $(LIBFTDIR) fclean
 

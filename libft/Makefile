@@ -14,6 +14,7 @@ FILES = ft_memset \
 		ft_strlen \
 		ft_strlcpy \
 		ft_strlcat \
+		ft_strcat \
 		ft_strchr \
 		ft_strrchr \
 		ft_is_char \

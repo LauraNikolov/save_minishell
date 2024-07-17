@@ -1,10 +1,19 @@
 #include "../minishell.h"
 
+void ft_safe_free(char **s)
+{
+	if (*s)
+	{
+		free(*s);
+		*s = NULL;
+	}
+}
+
 int	ft_safe_malloc(char **s, int size)
 {
 	if (!s)
 		return (0);
-	*s = ft_calloc(size + 100, sizeof(char));
+	*s = ft_calloc(size, sizeof(char));
 	if (!*s)
 	{
 		ft_putstr_fd("Malloc error\n", 2);

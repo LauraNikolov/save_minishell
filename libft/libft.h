@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: melmarti <melmarti@student.42.fr>          +#+  +:+       +#+        */
+/*   By: YOYO <YOYO@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 16:15:04 by melmarti          #+#    #+#             */
-/*   Updated: 2024/06/12 15:33:43 by melmarti         ###   ########.fr       */
+/*   Updated: 2024/07/12 17:58:41 by YOYO             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,8 @@ size_t		ft_strlcpy(char *dest, const char *src, size_t n);
 int			ft_strcmp(char *s1, char *s2);
 int			ft_strncmp(const char *s1, const char *s2, size_t n);
 char		*ft_strnstr(const char *s1, const char *s2, size_t n);
-int			ft_strrchr(const char *s, int c);
+int			ft_strrchr(char *s, int c);
+char		*ft_strcat(char *a, char *b);
 char		**ft_strdup_array(char **cmd);
 int			ft_tolower(int c);
 int			ft_toupper(int c);

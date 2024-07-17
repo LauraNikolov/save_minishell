@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_parse.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lauranicoloff <lauranicoloff@student.42    +#+  +:+       +#+        */
+/*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 11:56:13 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/13 17:39:03 by lauranicolo      ###   ########.fr       */
+/*   Updated: 2024/07/17 12:33:25 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,7 @@ void close_fds(t_cmd *cmd_list)
 	}
 }
 
+
 void destroy_tmp_file(t_cmd *cmd)
 {
 	t_cmd *current;
@@ -134,20 +135,22 @@ int recursive_free_ast(t_ast *ast)
 	return(0);
 }
 
+
+
 	void ft_exec(save_struct *t_struct, char **envp)
 	{
 		int cmd_size;
 		int return_value;
+		(void)return_value;
 
-		return_value = 0;
 		cmd_size = ft_nbr_of_cmd(t_struct->cmd);
 		if (cmd_size == 1)
 		{
 			t_struct->cmd->std_in = 0;
 			t_struct->cmd->std_out = 1;
 			manage_heredoc(t_struct->cmd);
-			if(apply_redir(t_struct->cmd) != -1)
-				return_value = ft_execve_single_cmd(t_struct->cmd, &envp, t_struct);
+			//apply_redir(t_struct->cmd);
+			return_value = ft_execve_single_cmd(t_struct->cmd, &envp, t_struct);
 			close_fds(t_struct->cmd);
 			ft_return_code(ft_itoa(return_value), &t_struct->envp);
 			destroy_tmp_file(t_struct->cmd);
@@ -161,5 +164,4 @@ int recursive_free_ast(t_ast *ast)
 			recursive_free_ast(t_struct->ast);
 		}
 	}
-	
 	

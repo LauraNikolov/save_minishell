@@ -1,29 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strrchr.c                                       :+:      :+:    :+:   */
+/*   ft_strcat.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: YOYO <YOYO@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: melmarti <melmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/09 14:02:11 by melmarti          #+#    #+#             */
-/*   Updated: 2024/07/12 17:58:31 by YOYO             ###   ########.fr       */
+/*   Created: 2024/06/27 14:15:59 by melmarti          #+#    #+#             */
+/*   Updated: 2024/06/27 15:01:25 by melmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_strrchr(char *s, int c)
+char	*ft_strcat(char *a, char *b)
 {
+	int	i;
 	int	j;
 
 	j = 0;
-	while (s[j])
-		j++;
-	while (j >= 0)
+	i = 0;
+	while (a[i])
+		i++;
+	while (b[j])
 	{
-		if (s[j] == (unsigned char)c)
-			return (j);
-		j--;
+		a[i] = b[j];
+		i++;
+		j++;
 	}
-	return (-1);
+	a[i] = '\0';
+	return (a);
 }

@@ -21,7 +21,7 @@ static int	ft_write_cderr(char *path, t_envp **env)
 	ft_putstr_cmd_fd("minishell : cd: ", 2, NULL, 2);
 	ft_putstr_cmd_fd(path, 2, NULL, 2);
 	ft_putstr_cmd_fd(": No such file or directory", 2, NULL, 0);
-	return (ft_return_code("1", env));
+	return (ft_return_code(ft_strdup("1"), env));
 }
 
 int	ft_cd(save_struct *t_struct)
@@ -33,7 +33,7 @@ int	ft_cd(save_struct *t_struct)
 	if (t_struct->cmd->cmd[2])
 	{
 		ft_putstr_cmd_fd("minishell : cd: too many arguments", 2, NULL, 0);
-		return (ft_return_code("1", &t_struct->envp));
+		return (ft_return_code(ft_strdup("1"), &t_struct->envp));
 	}
 	getcwd(old_pwd, PATH_MAX);
 	if (t_struct->cmd->cmd[1][0] != '/')
@@ -48,6 +48,6 @@ int	ft_cd(save_struct *t_struct)
 		ft_changepwd_var(&t_struct->envp, pwd, old_pwd);
 	}
 	else
-		return (ft_return_code("1", &t_struct->envp));
-	return (ft_return_code("0", &t_struct->envp), 0);
+		return (ft_return_code(ft_strdup("1"), &t_struct->envp));
+	return (ft_return_code(ft_strdup("0"), &t_struct->envp), 0);
 }
