@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 20:43:21 by lauranicolo       #+#    #+#             */
-/*   Updated: 2024/07/17 16:06:40 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/21 13:41:02 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,6 +185,7 @@ int	apply_redir(t_cmd *cmd)
 	{
 		if (current->type == R_HEREDOC || current->type == R_IN)
 		{
+			printf("koukou");
 			if (fd_in != -1)
 				close(fd_in);
 			fd_in = open(current->next->redir, O_RDONLY);

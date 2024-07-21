@@ -17,6 +17,7 @@ int ft_return_code(char *code, t_envp **env)
         }
         curr = curr->next;
     }
-    free(code);
-    return (ft_atoi(curr->var_value));
+    if(curr->var_value)
+        return (ft_atoi(curr->var_value));
+    return(0);
 }

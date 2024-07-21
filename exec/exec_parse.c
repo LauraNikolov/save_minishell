@@ -6,21 +6,38 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 11:56:13 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/17 12:33:25 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/21 13:49:17 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 #include <sys/wait.h>
 
+
 void ft_parse_error(t_cmd *cmd)
 {
+	struct stat path_stat;
+	if (stat(cmd->cmd[0], &path_stat) == -1) {
+		
 	if(ft_strchr(cmd->cmd[0], '/') == -1)
 	{
 		dprintf(2, "%s: command not found\n", cmd->cmd[0]);
 		exit(127);
 	}
-	else
+		dprintf(2 ,"minishell: %s: No such file or directory\n", cmd->cmd[0]);
+		exit(126);
+    }
+	if (S_ISDIR(path_stat.st_mode)) {
+        dprintf(2, "minishell: %s: Is a directory\n", cmd->cmd[0]);
+		exit(126);
+	}
+	
+	if(ft_strchr(cmd->cmd[0], '/') == -1)
+	{
+		dprintf(2, "%s: command not found\n", cmd->cmd[0]);
+		exit(127);
+	}
+	if(ft_strchr(cmd->cmd[0], '.') )
 	{
 		dprintf(2 ,"minishell: %s: No such file or directory\n", cmd->cmd[0]);
 		exit(126);
