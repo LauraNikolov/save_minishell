@@ -6,235 +6,85 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 20:43:21 by lauranicolo       #+#    #+#             */
-/*   Updated: 2024/07/21 13:41:02 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/22 10:55:23 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int	ft_limiter(char *s1, char *s2)
+int	open_redir_in(t_redir *current, int *fd_in, int *fd_out)
 {
-	int	i;
-	int	y;
-
-	i = 0;
-	y = 0;
-	while (s2[i])
+	(void)fd_out;
+	*fd_in = open(current->next->redir, O_RDONLY);
+	if (*fd_in == -1)
 	{
-		y = 0;
-		while (s2[i] == s1[y] && s1[y] && s2[i])
-		{
-			i++;
-			y++;
-			if (y == (int)ft_strlen(s1))
-				return (1);
-		}
-		i++;
+		access(current->next->redir, R_OK);
+		perror("minishell");
+		return (-1);
 	}
 	return (0);
 }
 
-char	*create_here_doc(char *str, char *limiter)
+int	open_redir_rout(t_redir *current, int *fd_in, int *fd_out)
 {
-	int		file;
-	char	*line;
-
-	file = open(str, O_CREAT | O_RDWR | O_TRUNC, 0000644);
-	if (file == -1)
-		perror("open:");
-	while (1)
+	(void)fd_in;
+	*fd_out = open(current->next->redir, O_WRONLY | O_TRUNC | O_CREAT, 0644);
+	if (*fd_out == -1)
 	{
-		write(1, "here_doc>  ", 10);
-		line = get_next_line(STDOUT_FILENO);
-		if (line == NULL)
-			printf("malloc error\n");
-		if (ft_limiter(limiter, line) == 1)
-			break ;
-		write(file, line, ft_strlen(line) - 1);
-		write(file, "\n", 1);
-		free(line);
-	}
-	free(line);
-	close(file);
-	return (str);
-}
-
-void	manage_heredoc(t_cmd *cmd)
-{
-	int		i;
-	t_cmd	*current;
-	t_redir	*current_redir;
-	char	*heredocname;
-
-	i = 0;
-	current = cmd;
-	while (current)
-	{
-		current_redir = current->redir;
-		if (!current->redir)
-		{
-			current = current->next;
-			continue ;
-		}
-		else
-		{
-			while (current_redir && current_redir->type == R_HEREDOC)
-			{
-				heredocname = ft_strjoin(ft_itoa(i), "heredoctmp");
-				if (current_redir->type == R_HEREDOC)
-					current_redir->next->redir = create_here_doc(heredocname,
-							current_redir->next->redir);
-				current_redir = current_redir->next->next;
-				i++;
-			}
-		}
-		current = current->next;
-	}
-}
-
-int	redir_in(t_cmd *cmd)
-{
-	int		fd;
-	t_redir	*current;
-	t_redir	*save;
-
-	current = cmd->redir;
-	save = cmd->redir;
-	fd = 0;
-	if (!cmd->redir)
+		access(current->next->redir, R_OK);
+		perror("minishell");
 		return (-1);
-	else
-	{
-		while (current && current->next)
-		{
-			if (current->type == R_IN)
-			{
-				fd = open(current->next->redir, O_RDONLY, O_TRUNC, 0644);
-			}
-			else if (current->type == R_HEREDOC)
-			{
-				fd = open(current->next->redir, O_RDONLY, 0644);
-			}
-			else
-			{
-				current = current->next;
-				continue ;
-			}
-			if (fd == -1)
-			{
-				perror("minishell");
-				return (-1);
-			}
-			if (!current->next->next)
-				break ;
-			else
-				close(fd);
-			current = current->next;
-		}
-		cmd->redir = save;
 	}
-	return (fd);
+	return (0);
 }
 
-int	check_redir_in(t_redir *redir)
+int	open_redir_rappend(t_redir *current, int *fd_in, int *fd_out)
 {
-	t_redir	*current;
-
-	current = redir;
-	while (current)
+	(void)fd_in;
+	*fd_out = open(current->next->redir, O_WRONLY | O_APPEND | O_CREAT, 0644);
+	if (*fd_out == -1)
 	{
-		if (current->type == R_HEREDOC)
-			return (0);
-		else if (current->type == R_IN)
-			return (0);
-		if (!current->next->next)
-			return (1);
-		else
-			current = current->next->next;
+		access(current->next->redir, R_OK);
+		perror("minishell");
+		return (-1);
 	}
-	return (1);
+	return (0);
 }
-int	check_redir_out(t_redir *redir)
+
+void	set_new_fd(t_cmd *cmd, int *fd_in, int *fd_out)
 {
-	t_redir	*current;
-
-	current = redir;
-	while (current)
+	if (*fd_in != -1)
 	{
-		if (current->type == R_OUT)
-			return (0);
-		else if (current->type == R_APPEND)
-			return (0);
-		if (!current->next->next)
-			return (1);
-		else
-			current = current->next->next;
+		if (cmd->std_in != 0)
+			close(cmd->std_in);
+		cmd->std_in = *fd_in;
 	}
-	return (1);
+	if (*fd_out != -1)
+	{
+		if (cmd->std_in != 0)
+			close(cmd->std_in);
+		cmd->std_out = *fd_out;
+	}
 }
+
 int	apply_redir(t_cmd *cmd)
 {
 	t_redir	*current;
-	int		fd_in = -1, fd_out;
+	int		fd_in;
+	int		fd_out;
 
-	if (!cmd->redir)
-		return (0);
+	fd_in = -1;
+	fd_out = -1;
 	current = cmd->redir;
-	fd_in = -1, fd_out = -1;
 	while (current && current->next)
 	{
-		if (current->type == R_HEREDOC || current->type == R_IN)
-		{
-			printf("koukou");
-			if (fd_in != -1)
-				close(fd_in);
-			fd_in = open(current->next->redir, O_RDONLY);
-			if (fd_in == -1)
-			{
-				access(current->next->redir, R_OK);
-				perror("minishell");
-				return (-1);
-			}
-		}
-		else if (current->type == R_OUT)
-		{
-			if (fd_out != -1)
-				close(fd_out);
-			fd_out = open(current->next->redir, O_WRONLY | O_TRUNC | O_CREAT,
-					0644);
-			if (fd_out == -1)
-			{
-				access(current->next->redir, R_OK);
-				perror("minishell");
-				return (-1);
-			}
-		}
-		else if (current->type == R_APPEND)
-		{
-			if (fd_out != -1)
-				close(fd_out);
-			fd_out = open(current->next->redir, O_WRONLY | O_APPEND | O_CREAT,
-					0644);
-			if (fd_out == -1)
-			{
-				access(current->next->redir, R_OK);
-				perror("minishell");
-				return (-1);
-			}
-		}
-		current = current->next ? current->next->next : NULL;
+		if (dispatch_redir(current, &fd_in, &fd_out) == -1)
+			return (-1);
+		if (current->next)
+			current = current->next->next;
+		else
+			current = NULL;
 	}
-	if (fd_in != -1)
-    {
-        if(cmd->std_in != 0)
-            close(cmd->std_in);
-		cmd->std_in = fd_in;
-    }
-	if (fd_out != -1)
-    {
-         if(cmd->std_in != 0)
-            close(cmd->std_in);
-		cmd->std_out = fd_out;
-    }
-	return(0);
+	set_new_fd(cmd, &fd_in, &fd_out);
+	return (0);
 }

@@ -1,10 +1,20 @@
 #include "../minishell.h"
 
-int	ft_pwd(t_envp **envp)
+int	ft_pwd(char **cmd, t_envp **envp)
 {
 	int		i;
 	char	*path;
 
+	if(cmd[1])
+	{
+		if (cmd[1][0] == '-')
+		{
+			ft_putstr_fd("minishell: pwd: ", 2);
+			ft_putstr_fd(cmd[1], 2);
+			ft_putstr_fd(": invalid option\n", 2);
+			return (ft_return_code(ft_strdup("2"), envp));
+		}
+	}
 	path = ft_search_var("PWD", envp);
 	i = -1;
 	if (path)

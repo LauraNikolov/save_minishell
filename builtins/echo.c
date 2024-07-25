@@ -8,7 +8,7 @@ int	redir_out(t_cmd *cmd)
 
 	current = cmd->redir;
 	save = cmd->redir;
-	fd = 1;
+	fd = -1;
 	if (!cmd->redir)
 		return (-1);
 	else
@@ -45,34 +45,26 @@ int	redir_out(t_cmd *cmd)
 }
 static void	ft_echo_str(t_cmd *cmd, int option, int i)
 {
-	//int	fd_in;
-	//int fd_out;
+	int	fd;
 
-	//fd_out = 1;
-	//fd_in = 0;
-	//if (cmd->redir)
-	//{
-		//if(cmd->std_in )
-		//fd_in = redir_in(cmd);
-		//if(fd_in != 0)
-			//close(fd_in);
-		//fd_out = redir_out(cmd);
-		//if (fd_out == -1)
-			//ft_putstr_fd("no such file or directory\n", 2);
-	//}
-	//if(cmd->std_in != 0)
-		//close(cmd->std_in);
-	while (cmd->cmd[i] && cmd->std_out != -1)
+	fd = 1;
+	if (cmd->redir)
 	{
-		ft_putstr_fd(cmd->cmd[i], cmd->std_out);
+		fd = redir_out(cmd);
+		if (fd == -1)
+			ft_putstr_fd("no such file or directory", 2);
+	}
+	while (cmd->cmd[i])
+	{
+		ft_putstr_fd(cmd->cmd[i], fd);
 		if (cmd->cmd[i + 1])
-			ft_putchar_fd(' ', cmd->std_out);
+			ft_putchar_fd(' ', fd);
 		i++;
 	}
 	if (!option)
-		ft_putchar_fd('\n', cmd->std_out);
-	//if (cmd->std_out != 1)
-		//close(cmd->std_out);
+		ft_putchar_fd('\n', fd);
+	if (fd != 1)
+		close(fd);
 }
 
 int	ft_echo(t_cmd *cmd, t_envp **env)
@@ -81,13 +73,6 @@ int	ft_echo(t_cmd *cmd, t_envp **env)
 	int	i;
 	int	j;
 
-	// printf("\nJe passe dans echo\n");
-	// printf("\nJ expand\n\n");
-	// ft_expand(cmd, env);
-	// ft_print_envp(env);
-
-	// printf("cmd juste avant d'echo\n");
-	// ft_print_lst(cmd);
 	if (!cmd->cmd[1])
 	{
 		ft_putchar_fd('\n', 2);

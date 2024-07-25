@@ -13,6 +13,8 @@ int ft_return_code(char *code, t_envp **env)
         { 
             ft_safe_free(&curr->var_value);
             curr->var_value = ft_strdup(code);
+            if(!curr->var_value)
+                return(-1);
             break ;
         }
         curr = curr->next;

@@ -81,13 +81,11 @@ int	ft_str_is_alpha(char *s)
 	return (0);
 }
 
-int	ft_putstr_cmd_fd(char *s, int fd, char **str, int flag)
+int	ft_putstr_cmd_fd (char *s, int fd, char **str, int flag)
 {
 	int	i;
 
 	i = -1;
-	if (!s)
-		return (-1);
 	if (flag == 2)
 	{
 		write(fd, s, ft_strlen(s));
@@ -111,7 +109,14 @@ int	ft_putstr_cmd_fd(char *s, int fd, char **str, int flag)
 
 void	ft_all_free(save_struct *t_struct)
 {
-	ft_free_lst(t_struct->cmd);
-	free(t_struct->save_spaces);
-	free(t_struct);
+	if(t_struct->cmd)
+		ft_free_lst(t_struct->cmd);
+	if(t_struct->save_spaces)
+		free(t_struct->save_spaces);
+	if(t_struct->ast)
+		free(t_struct->ast);
+	if(t_struct)
+		free(t_struct);
 }
+
+

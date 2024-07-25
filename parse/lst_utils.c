@@ -197,6 +197,8 @@ void	add_to_envp_lst(t_envp **head, t_envp *new_node)
 {
 	t_envp	*last;
 
+	if(!new_node)
+		return;
 	if (!*head)
 	{
 		*head = new_node;
@@ -219,9 +221,13 @@ t_envp	*create_envp_node(char *var, int print_flag)
 	while (var[i] && var[i] != '=')
 		i++;
 	envp->var_name = ft_strndup(var, i);
+	if(!envp->var_name)
+		return(NULL);
 	envp->var_value = NULL;
 	if (var[i + 1])
 		envp->var_value = ft_strdup(&var[i + 1]);
+	if(!envp->var_value)
+		return(NULL);
 	envp->print_flag = print_flag;
 	envp->next = NULL;
 	envp->prev = NULL;
@@ -249,14 +255,14 @@ t_cmd	*create_cmd_node2(t_cmd *new_node, char **cmd)
 	return (new_node);
 }
 
-t_cmd	*create_cmd_node(t_redir *redir, char **cmd, char c)
+t_cmd	*create_cmd_node(t_redir *redir, char **cmd, char c, save_struct *t_struct)
 {
 	t_cmd	*new_node;
 	int		i;
 
 	new_node = malloc(sizeof(t_cmd));
 	if (!new_node)
-		return (NULL);
+		exit_error("malloc failed\n", t_struct);
 	i = 0;
 	while ((*cmd)[i] && (*cmd)[i] == ' ')
 		i++;

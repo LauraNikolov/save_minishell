@@ -48,7 +48,6 @@ int	ft_exit(save_struct *t_struct, t_envp **envp)
 		ft_all_free(t_struct);
 		exit(2);
 	}
-	
 	else if (ft_str_isdigit(code[1]) && code[2])
 	{
 		ft_putstr_cmd_fd("exit", 2, NULL, 0);

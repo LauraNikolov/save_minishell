@@ -45,6 +45,8 @@ typedef struct t_ast
 	struct t_ast	*parent;
 }					t_ast;
 
+
+
 // typedef struct s_ast
 // {
 // 	t_token_type	type;
@@ -94,6 +96,7 @@ typedef struct save_struct
 {
 	struct s_cmd	*cmd;
 	struct t_ast	*ast;
+	struct t_ast	*save_root;
 	struct s_envp	*envp;
 	struct s_exec	*exec;
 	char			*save_spaces;

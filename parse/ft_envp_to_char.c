@@ -62,13 +62,13 @@ char	**ft_envp_to_char(t_envp *env)
 		envp[j][k++] = '=';
 		l = 0;
 		if (env->var_value)
-		{
 			while (env->var_value[l])
 				envp[j][k++] = env->var_value[l++];
-		}
 		envp[j][k] = '\0';
 		env = env->next;
 	}
 	envp[j] = NULL;
 	return (envp);
 }
+
+
