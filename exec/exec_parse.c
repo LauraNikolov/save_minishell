@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 11:56:13 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/23 12:25:06 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/25 16:34:50 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,6 @@ void	ft_exec(save_struct *t_struct, char **envp)
 		ft_exec_multi_cmds(t_struct, envp);
 		close_fds(t_struct->cmd);
 		destroy_tmp_file(t_struct->cmd);
-		recursive_free_ast(t_struct->ast);
+		recursive_free_ast(&t_struct->ast);
 	}
 }

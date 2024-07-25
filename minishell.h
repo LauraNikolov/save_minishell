@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 14:41:19 by lauranicolo       #+#    #+#             */
-/*   Updated: 2024/07/23 12:37:33 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/25 16:34:42 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ int		ft_execve_single_cmd(t_cmd *cmd, char ***envp, save_struct *t_struct);
 void	manage_heredoc(t_cmd *cmd, save_struct *t_struct);
 int     is_it_builtin(t_cmd *cmd, t_envp **env);
 int	count_parenthesis(t_cmd *node);
-int	recursive_free_ast(t_ast *ast);
+int	recursive_free_ast(t_ast **ast);
 int	ft_nbr_of_cmd(t_cmd *cmd);
 char	*create_here_doc(char *str, char *limiter);
 int wait_for_child(t_cmd *cmd, int *return_value);int	
