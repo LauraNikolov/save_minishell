@@ -12,13 +12,10 @@
 
 #include "../minishell.h"
 
-void exit_error(char *str, save_struct *t_struct)
+void	exit_error(char *str, save_struct *t_struct)
 {
-    ft_putstr_fd(str, 2);
-    ft_free_envp_lst(&t_struct->envp);
-    ft_all_free(t_struct);
-    exit(134);
+	ft_putstr_fd(str, 2);
+	ft_free_envp_lst(&t_struct->envp);
+	ft_all_free(t_struct);
+	exit(134);
 }
-
-
-

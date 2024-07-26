@@ -37,6 +37,6 @@ void	ft_exec_multi_cmds(save_struct *t_struct, char **envp)
 	t_struct->save_root = t_struct->ast;
 	return_value = exec_ast_recursive(t_struct->ast, envp, return_value,
 			t_struct);
-	if(ft_return_code(ft_itoa(return_value), &t_struct->envp) == -1)
+	if (ft_return_code(ft_itoa(return_value), &t_struct->envp) == -1)
 		exit_error("malloc failed\n", t_struct);
 }

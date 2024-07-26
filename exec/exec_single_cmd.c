@@ -70,7 +70,8 @@ int	ft_execve_single_cmd(t_cmd *cmd, char ***envp, save_struct *t_struct)
 		if (return_value != -1)
 		{
 			if (update_envp(envp, t_struct) == -1)
-				return(exit_error("environnement expand failed\n", t_struct), 0);
+				return (exit_error("environnement expand failed\n", t_struct),
+					0);
 			return (return_value);
 		}
 	}

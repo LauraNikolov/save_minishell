@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 14:41:19 by lauranicolo       #+#    #+#             */
-/*   Updated: 2024/07/25 16:34:42 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/25 17:12:17 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,6 +123,16 @@ int	open_redir_rappend(t_redir *current, int *fd_in, int *fd_out);
 int	open_redir_rout(t_redir *current, int *fd_in, int *fd_out);
 int	open_redir_in(t_redir *current, int *fd_in, int *fd_out);
 void exit_error(char *str, save_struct *t_struct);
+int	ft_or(t_ast *root, char **envp, int return_value, save_struct *t_struct);
+int	ft_or_recursive(t_ast *root, char **envp, int return_value,
+		save_struct *t_struct);
+int	ft_and(t_ast *root, char **envp, int return_value, save_struct *t_struct);
+int	ft_and_recursive(t_ast *root, char **envp, int return_value,
+		save_struct *t_struct);
+int	ft_pipe(t_ast *root, char **envp, int return_value, save_struct *t_struct);
+int	ft_pipe_recursive(t_ast *root, char **envp, int return_value,
+		save_struct *t_struct);
+t_cmd	*get_last_cmd(t_ast *node);
 
 // BUILTINS
 int		ft_dispatch_builtin(t_cmd *cmd, save_struct *t_struct);

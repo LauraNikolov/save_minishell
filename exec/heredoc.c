@@ -47,7 +47,7 @@ char	*create_here_doc(char *str, char *limiter)
 		write(1, "here_doc>  ", 10);
 		line = get_next_line(STDOUT_FILENO);
 		if (line == NULL)
-			return(NULL);
+			return (NULL);
 		if (ft_limiter(limiter, line) == 1)
 			break ;
 		write(file, line, ft_strlen(line) - 1);
@@ -67,7 +67,7 @@ static void	handle_heredoc(t_redir *redir, int i, save_struct *t_struct)
 	if (redir->type == R_HEREDOC)
 	{
 		redir->next->redir = create_here_doc(heredocname, redir->next->redir);
-		if(!redir->next->redir)
+		if (!redir->next->redir)
 			exit_error("heredoc failed\n", t_struct);
 	}
 }

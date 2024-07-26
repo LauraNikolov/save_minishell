@@ -21,7 +21,7 @@ t_ast	*create_ast_node(t_cmd *cmd, t_ast *parent, save_struct *t_struct)
 		cmd = cmd->next;
 	}
 	node = (t_ast *)malloc(sizeof(t_ast));
-	if(!node)
+	if (!node)
 		exit_error("malloc failed\n", t_struct);
 	node->cmd = cmd;
 	node->left = NULL;
@@ -111,7 +111,8 @@ static t_cmd	*find_pipe_root(t_cmd *start, t_cmd *end)
 }
 
 // Fonction principale
-t_ast	*build_ast_recursive(t_cmd *start, t_cmd *end, t_ast *parent, save_struct *t_struct)
+t_ast	*build_ast_recursive(t_cmd *start, t_cmd *end, t_ast *parent,
+		save_struct *t_struct)
 {
 	t_cmd	*root;
 	t_cmd	*right_start;

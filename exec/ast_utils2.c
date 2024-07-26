@@ -35,18 +35,18 @@ int	count_parenthesis(t_cmd *node)
 int	recursive_free_ast(t_ast **ast)
 {
 	if (*ast == NULL)
-        return (0);
-    if ((*ast)->left)
-        recursive_free_ast(&(*ast)->left);
-    if ((*ast)->right)
-        recursive_free_ast(&(*ast)->right);
-    free(*ast);
-    *ast = NULL;
-    return (0);
+		return (0);
+	if ((*ast)->left)
+		recursive_free_ast(&(*ast)->left);
+	if ((*ast)->right)
+		recursive_free_ast(&(*ast)->right);
+	free(*ast);
+	*ast = NULL;
+	return (0);
 }
 
-void pipe_error(void)
+void	pipe_error(void)
 {
-    perror("pipe :");
-    return;
+	perror("pipe :");
+	return ;
 }

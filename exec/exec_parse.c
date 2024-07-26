@@ -6,70 +6,42 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 11:56:13 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/25 16:34:50 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/26 12:47:52 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 #include <errno.h>
+#include <sys/stat.h>
 #include <sys/wait.h>
 
-void	manage_err_dir(t_cmd *cmd)
+static void	error_exec_str(char *str, char *cmd, int exit_code)
 {
-	struct stat	path_stat;
-
-	if (stat(cmd->cmd[0], &path_stat) == -1)
-	{
-		if (strchr(cmd->cmd[0], '/'))
-		{
-			dprintf(2, "%s: command not found\n", cmd->cmd[0]);
-			exit(127);
-		}
-		else
-		{
-			dprintf(2, "minishell: %s: No such file or directory\n",
-				cmd->cmd[0]);
-			exit(127);
-		}
-	}
-	if (S_ISDIR(path_stat.st_mode))
-	{
-		if (!strchr(cmd->cmd[0], '/'))
-		{
-			dprintf(2, "%s: command not found\n", cmd->cmd[0]);
-			exit(127);
-		}
-		dprintf(2, "minishell: %s: Is a directory\n", cmd->cmd[0]);
-		exit(126);
-	}
-	if (access(cmd->cmd[0], X_OK) == -1)
-	{
-		if (errno == EACCES)
-		{
-			dprintf(2, "minishell: %s: Permission denied\n", cmd->cmd[0]);
-			exit(126);
-		}
-		else
-		{
-			dprintf(2, "minishell: %s: Error\n", cmd->cmd[0]);
-			exit(1);
-		}
-	}
+	ft_putstr_fd("minishell :", 2);
+	ft_putstr_fd(cmd, 2);
+	ft_putstr_fd(": ", 2);
+	ft_putstr_fd(str, 2);
+	exit(exit_code);
 }
 
 void	ft_parse_error(t_cmd *cmd)
 {
-	manage_err_dir(cmd);
-	if (ft_strchr(cmd->cmd[0], '/') == -1)
+	struct stat	buf;
+
+	if (stat(cmd->cmd[0], &buf) != -1)
 	{
-		dprintf(2, "%s: command not found\n", cmd->cmd[0]);
-		exit(127);
+		if (((S_ISDIR(buf.st_mode)) && (!ft_strncmp("./", cmd->cmd[0], 2)))
+			|| (cmd->cmd[0][ft_strlen(cmd->cmd[0]) - 1] == '/'))
+			error_exec_str("Is a directory", cmd->cmd[0], 126);
+		if (!(buf.st_mode & S_IXUSR) || !(buf.st_mode & S_IRUSR)
+			|| !S_ISLNK(buf.st_mode) || !S_ISDIR(buf.st_mode))
+			error_exec_str("Permission denied", cmd->cmd[0], 126);
 	}
-	if (ft_strchr(cmd->cmd[0], '.'))
-	{
-		dprintf(2, "minishell: %s: No such file or directory\n", cmd->cmd[0]);
-		exit(126);
-	}
+	if (ft_strncmp("./", cmd->cmd[0], 2) == 0 || ft_strncmp("/", cmd->cmd[0],
+			1) == 0)
+		error_exec_str("No such file or directory", cmd->cmd[0], 127);
+	else
+		error_exec_str("command not found", cmd->cmd[0], 127);
 }
 
 void	close_fds(t_cmd *cmd_list)
