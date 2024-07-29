@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/26 13:32:24 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/26 13:33:10 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/29 16:45:04 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int	get_return_code(t_cmd *cmd)
 	return (return_value);
 }
 
-int	ft_or(t_ast *root, char **envp, int return_value, save_struct *t_struct)
+int	ft_or(t_ast *root, char **envp, int return_value, t_save_struct *t_struct)
 {
 	return (ft_or_recursive(root, envp, return_value, t_struct));
 }

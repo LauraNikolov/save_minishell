@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 17:39:28 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/23 12:10:14 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/29 19:35:10 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,12 +53,13 @@ void	set_pipe_redir(t_cmd *cmd, t_ast *root)
 	}
 }
 
-int	ft_execve_pipe(t_cmd *cmd, char **envp, t_ast *root, save_struct *t_struct)
+int	ft_execve_pipe(t_cmd *cmd, char **envp, t_ast *root, t_save_struct *t_struct)
 {
 	int	return_value;
 
 	return_value = 0;
 	cmd->pid = fork();
+	ft_signal(0);
 	if (cmd->pid == -1)
 		exit_error("fork failed\n", t_struct);
 	if (cmd->pid == 0)

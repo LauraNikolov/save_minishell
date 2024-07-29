@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 16:05:37 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/23 12:12:56 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/29 19:34:57 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	manage_single_child(t_cmd *cmd, char ***envp)
 	exit(-1);
 }
 
-static int	update_envp(char ***envp, save_struct *t_struct)
+static int	update_envp(char ***envp, t_save_struct *t_struct)
 {
 	char	**new_envp;
 
@@ -57,12 +57,12 @@ static int	update_envp(char ***envp, save_struct *t_struct)
 	return (0);
 }
 
-int	ft_execve_single_cmd(t_cmd *cmd, char ***envp, save_struct *t_struct)
+int	ft_execve_single_cmd(t_cmd *cmd, char ***envp, t_save_struct *t_struct)
 {
 	int	return_value;
 
 	return_value = 0;
-	if (is_it_builtin(cmd, &t_struct->envp) == 1)
+	if (is_it_builtin(cmd, &t_struct->envp, t_struct) == 1)
 	{
 		if (apply_redir(cmd) == -1)
 			return (ft_return_code("1", &t_struct->envp));
@@ -76,6 +76,7 @@ int	ft_execve_single_cmd(t_cmd *cmd, char ***envp, save_struct *t_struct)
 		}
 	}
 	cmd->pid = fork();
+	ft_signal(0);
 	if (cmd->pid == -1)
 		exit_error("fork failed", t_struct);
 	if (cmd->pid == 0)

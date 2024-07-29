@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   struct.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/29 14:15:39 by melmarti          #+#    #+#             */
+/*   Updated: 2024/07/29 16:44:23 by lnicolof         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef STRUCT_H
 # define STRUCT_H
 
@@ -20,7 +32,7 @@ typedef enum s_token_type
 
 typedef struct s_cmd
 {
-	pid_t           pid;
+	pid_t			pid;
 	char			**cmd;
 	char			*path;
 	int				prev_fd;
@@ -28,13 +40,13 @@ typedef struct s_cmd
 	int				std_in;
 	int				pipe[2];
 	int				return_value;
-	struct s_redir	*redir;
 	int				*bool_bracket;
-	int				expand_flag;
-	t_token_type	type;
+	char			*exp_code;
+	struct s_redir	*redir;
 	struct s_cmd	*next;
 	struct s_cmd	*prev;
 	struct s_envp	*env;
+	t_token_type	type;
 }					t_cmd;
 
 typedef struct t_ast
@@ -44,28 +56,6 @@ typedef struct t_ast
 	struct t_ast	*right;
 	struct t_ast	*parent;
 }					t_ast;
-
-
-
-// typedef struct s_ast
-// {
-// 	t_token_type	type;
-// 	char *cmd_str;
-// 	union data
-//     {
-//         struct ope operator;
-//         struct commands command;
-//     } data;
-// 	struct s_ast	*right;
-// 	struct s_ast	*left;
-// 	struct s_ast    *parent;
-// }					t_ast;
-
-typedef struct ope
-{
-	char			*content;
-	int				prior;
-}					ope;
 
 typedef struct s_redir
 {
@@ -92,14 +82,27 @@ typedef struct s_exec
 	int				pipe[2];
 }					t_exec;
 
-typedef struct save_struct
+typedef struct s_save_struct
 {
+	char			*save_spaces;
+	int				redir_flag;
+	struct t_ast	*save_root;
 	struct s_cmd	*cmd;
 	struct t_ast	*ast;
-	struct t_ast	*save_root;
 	struct s_envp	*envp;
 	struct s_exec	*exec;
-	char			*save_spaces;
-}					save_struct;
+}					t_save_struct;
+
+typedef struct s_data_parsing
+{
+	char			*buffer;
+	char			*cmd;
+	char			*exp;
+	int				bufflen;
+	int				cmd_index;
+	int				i;
+	int				k;
+	t_save_struct	*t_struct;
+}					t_data_parsing;
 
 #endif

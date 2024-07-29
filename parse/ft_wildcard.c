@@ -1,33 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_wildcard.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: melmarti <melmarti@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/29 00:30:30 by renard            #+#    #+#             */
+/*   Updated: 2024/07/29 13:24:39 by melmarti         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
-
-int	ft_match(char *cmd, char *dir)
-{
-	int	i;
-	int	j;
-	int	k;
-
-	i = 0;
-	j = 0;
-	k = 0;
-	while (cmd[i] && cmd[i] != '*')
-		i++;
-	while (cmd[k + i] && cmd[k + i] == '*')
-		k++;
-	if ((!cmd || !cmd[0]) && dir)
-		return (0);
-	if (!ft_strncmp(cmd, dir, i))
-	{
-		if (cmd[i + k - 1] == '*' && !cmd[i + k])
-			return (1);
-		if (!cmd[i + k] && !dir[i])
-			return (1);
-		while (cmd[i + k] && dir[j] && cmd[i + k] != dir[j])
-			j++;
-		j += ft_is_char(&dir[j + 1], dir[j]);
-		return (ft_match(&cmd[i + k], &dir[j]));
-	}
-	return (0);
-}
 
 static int	get_wild_len(char *s)
 {
@@ -48,32 +31,36 @@ static int	get_wild_len(char *s)
 	return (len);
 }
 
-static char	**ft_cpy_match(int i, char **new_tab, char **cmd)
+static void	ft_readdir(char ***new_tab, char **cmd, int *j, int i)
 {
 	struct dirent	*entry;
 	DIR				*dir;
-	int				index;
-	int				j;
 
-	j = 0;
+	dir = opendir(".");
+	entry = readdir(dir);
+	while (entry)
+	{
+		if (entry->d_name[0] != '.')
+		{
+			if (ft_match(cmd[i], entry->d_name))
+				(*new_tab)[(*j)++] = ft_strdup(entry->d_name);
+		}
+		entry = readdir(dir);
+	}
+	closedir(dir);
+}
+
+static char	**ft_cpy_match(int i, char **new_tab, char **cmd)
+{
+	int	j;
+	int	index;
+
 	index = -1;
+	j = 0;
 	while (cmd[++index])
 	{
 		if (index == i)
-		{
-			dir = opendir(".");
-			entry = readdir(dir);
-			while (entry)
-			{
-				if (entry->d_name[0] != '.')
-				{
-					if (ft_match(cmd[i], entry->d_name))
-						new_tab[j++] = ft_strdup(entry->d_name);
-				}
-				entry = readdir(dir);
-			}
-			closedir(dir);
-		}
+			ft_readdir(&new_tab, cmd, &j, i);
 		else
 			new_tab[j++] = ft_strdup(cmd[index]);
 	}
@@ -95,16 +82,13 @@ char	**ft_new_args(char **cmd)
 		{
 			wild_len = get_wild_len(cmd[i]);
 			len = ft_count_tab(cmd) + wild_len;
-			if (wild_len)
-			{
-				new_tab = ft_calloc(sizeof(char *), len + wild_len);
-				if (!new_tab)
-					return (NULL);
-				new_tab = ft_cpy_match(i, new_tab, cmd);
-				ft_free_tab(cmd);
-				cmd = ft_strdup_array(new_tab);
-				ft_free_tab(new_tab);
-			}
+			new_tab = ft_calloc(sizeof(char *), len + wild_len);
+			if (!new_tab)
+				return (NULL);
+			new_tab = ft_cpy_match(i, new_tab, cmd);
+			ft_free_tab(cmd);
+			cmd = ft_strdup_array(new_tab);
+			ft_free_tab(new_tab);
 		}
 	}
 	return (cmd);
@@ -117,9 +101,8 @@ void	ft_wildcard(t_cmd **lst)
 	curr = *lst;
 	while (curr)
 	{
-		if (curr->cmd && curr->expand_flag)
+		if (curr->cmd)
 			curr->cmd = ft_new_args(curr->cmd);
 		curr = curr->next;
 	}
-	
 }

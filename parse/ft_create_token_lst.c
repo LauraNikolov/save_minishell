@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_create_token_lst.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/29 00:29:55 by renard            #+#    #+#             */
+/*   Updated: 2024/07/29 16:44:23 by lnicolof         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 char	*ft_search_var(char *var, t_envp **env)
@@ -16,173 +28,100 @@ char	*ft_search_var(char *var, t_envp **env)
 	return (NULL);
 }
 
-int	ft_inside_quote(char *s, char **cmd, int *cmd_index, save_struct *t_struct)
-{
-	int		i;
-	char	c;
-
-	i = 0;
-	c = s[-1];
-	while (s[i] && s[i] != c)
-	{
-		if (s[i] == ' ')
-		{
-			(*cmd)[*cmd_index] = '%';
-			if(t_struct)
-				ft_strcat(t_struct->save_spaces, "1");
-			(*cmd_index)++;
-		}
-		else
-		{
-			(*cmd)[*cmd_index] = s[i];
-			if (t_struct)
-				ft_strcat(t_struct->save_spaces, "0");
-			(*cmd_index)++;
-		}
-		i++;
-	}
-	return (i + 1);
-}
-
-t_redir	*ft_redir(char *s, int *i, int len)
-{
-	t_redir	*redir;
-	char	*cmd;
-	int		infile;
-
-	infile = 0;
-	redir = NULL;
-	while (*i < len)
-	{
-		if (ft_is_str(s[*i], "><"))
-		{
-			*i += ft_check_double_symbols(&s[*i], &cmd);
-			add_to_redir_lst(&redir, create_redir_node(cmd));
-			ft_safe_free(&cmd);
-		}
-		while (*i < len && s[*i] == ' ')
-			(*i)++;
-		if (!ft_is_str(s[*i], "><"))
-		{
-			while (s[*i + infile] && !ft_is_str(s[*i + infile], "><") && s[*i
-				+ infile] != ' ')
-				infile++;
-			ft_handle_quote(&s[*i], &cmd, infile, NULL, 0);
-			add_to_redir_lst(&redir, create_redir_node(cmd));
-			ft_safe_free(&cmd);
-			(*i) += infile - 1;
-			break ;
-		}
-	}
-	return (redir);
-}
-
-t_redir	*ft_handle_quote(char *s, char **cmd, int len, save_struct *t_struct, int bufflen)
-{
-	int		i;
-	int		cmd_index;
-	t_redir	*redir;
-
-	redir = NULL;
-
-	if (t_struct && !t_struct->save_spaces)
-		ft_safe_malloc(&(t_struct->save_spaces), bufflen + 1);
-	ft_safe_malloc(cmd, ft_quote_len(s, len) + 1);
-	cmd_index = 0;
-	i = -1;
-	while (s[++i] && i < len)
-	{
-		if (s[i] == '\'' || s[i] == '\"')
-			i += ft_inside_quote(&s[i + 1], cmd, &cmd_index, t_struct);
-		else if (ft_is_str(s[i], "><"))
-			add_to_redir_lst(&redir, ft_redir(s, &i, len));
-		else
-		{
-			(*cmd)[cmd_index] = s[i];
-			if (t_struct && (*cmd)[cmd_index] != ' ')
-				ft_strcat(t_struct->save_spaces, "3");
-			else if (t_struct)
-				ft_strcat(t_struct->save_spaces, "2");
-			cmd_index++;
-		}
-	}
-	return (redir);
-}
-
-t_redir	*create_redir_node(char *s)
-{
-	t_redir	*new_node;
-
-	if (!s)
-		return (NULL);
-	new_node = malloc(sizeof(t_redir));
-	new_node->redir = ft_strdup(s);
-	if (!ft_strcmp(s, "<<"))
-		new_node->type = R_HEREDOC;
-	else if (!ft_strcmp(s, "<"))
-		new_node->type = R_IN;
-	else if (!ft_strcmp(s, ">"))
-		new_node->type = R_OUT;
-	else if (!ft_strcmp(s, ">>"))
-		new_node->type = R_APPEND;
-	else
-		new_node->type = WORD;
-	new_node->next = NULL;
-	return (new_node);
-}
-
-void	add_to_redir_lst(t_redir **head, t_redir *new_node)
-{
-	t_redir	*last;
-
-	if (!*head)
-	{
-		*head = new_node;
-		return ;
-	}
-	last = lst_last_redir(*head);
-	last->next = new_node;
-}
-
-static int	ft_get_symb(save_struct *t_struct, char *buff, char **cmd)
+static int	ft_get_symb(t_save_struct *t_struct, char *buff, char **cmd)
 {
 	int	len;
 	int	i;
 
 	i = 0;
 	len = ft_check_double_symbols(buff, cmd);
-	add_to_lst(&(t_struct->cmd), create_cmd_node(NULL, cmd, buff[-1], t_struct));
+	add_to_lst(&(t_struct->cmd), create_cmd_node(NULL, cmd, NULL));
 	i = len;
 	while (i--)
 		ft_strcat(t_struct->save_spaces, "0");
 	return (len);
 }
 
-void	ft_create_token_lst(char *buffer, save_struct *t_struct)
+void	ft_encode_expand(char **exp_code, char c, int quote_flag,
+		t_save_struct *t_struct)
 {
-	char	*cmd;
-	int		j;
 	int		len;
-	int		quote_flag;
+	char	*new_exp;
 
-	j = 0;
-	quote_flag = -1;
-	cmd = NULL;
-	while (buffer[j])
+	if (!*exp_code)
 	{
-		len = 0;
-		while (((buffer[j] && quote_flag == 1)) || ((buffer[j]
-					&& !ft_is_str(buffer[j], "|()&") && quote_flag == -1)))
-		{
-			if (buffer[j] == '\'' || buffer[j] == '\"')
-				quote_flag *= -1;
-			j++;
-			len++;
-		}
-		add_to_lst(&(t_struct->cmd), create_cmd_node(ft_handle_quote(&buffer[j
-					- len], &cmd, len, t_struct, ft_strlen(buffer)), &cmd, buffer[j - 1], t_struct));
-		if (ft_is_str(buffer[j], "|()&"))
-			j += ft_get_symb(t_struct, &buffer[j], &cmd);
+		*exp_code = ft_calloc(2, sizeof(char));
+		if (!*exp_code)
+			return ;
+		if (c == '\'' && quote_flag == 1)
+			(*exp_code)[0] = '0';
+		else
+			(*exp_code)[0] = '1';
+		return ;
 	}
+	len = ft_strlen(*exp_code);
+	if (ft_safe_malloc(&new_exp, len + 2, t_struct))
+		return ;
+	ft_strlcpy(new_exp, *exp_code, len + 1);
+	if (c == '\'' && quote_flag == 1)
+		ft_strcat(new_exp, "0");
+	else
+		ft_strcat(new_exp, "1");
+	ft_safe_free(exp_code);
+	*exp_code = ft_strdup(new_exp);
+	ft_safe_free(&new_exp);
 }
 
+static int	ft_split_cmd(char *buffer, int *j, char **exp_code,
+		t_save_struct *t_struct)
+{
+	int		len;
+	char	c;
+	int		quote_flag;
+
+	len = 0;
+	c = '\0';
+	quote_flag = -1;
+	while (((buffer[*j] && quote_flag == 1)) || ((buffer[*j]
+				&& !ft_is_str(buffer[*j], "|()&") && quote_flag == -1)))
+	{
+		if (buffer[*j] == '\'' || buffer[*j] == '\"')
+		{
+			c = buffer[*j];
+			quote_flag *= -1;
+		}
+		if (buffer[*j] == '$')
+			ft_encode_expand(exp_code, c, quote_flag, t_struct);
+		(*j)++;
+		len++;
+	}
+	return (len);
+}
+
+void	ft_create_token_lst(char *buffer, t_save_struct *t_struct)
+{
+	char			*exp_code;
+	int				j;
+	int				len;
+	t_data_parsing	data;
+
+	j = 0;
+	exp_code = NULL;
+	ft_memset(&data, '0', sizeof(data));
+	if (t_struct && !t_struct->save_spaces)
+		if (ft_safe_malloc(&(t_struct->save_spaces), ft_strlen(buffer) + 1,
+				t_struct) == -1)
+			return (exit_error("Malloc failed\n", t_struct));
+	data.buffer = buffer;
+	data.cmd = NULL;
+	data.t_struct = t_struct;
+	data.bufflen = ft_strlen(buffer);
+	while (buffer[j])
+	{
+		len = ft_split_cmd(buffer, &j, &exp_code, t_struct);
+		add_to_lst(&(t_struct->cmd), create_cmd_node(ft_handle_quote(&buffer[j
+					- len], len, &data, &data.cmd), &data.cmd, &exp_code));
+		if (ft_is_str(buffer[j], "|()&"))
+			j += ft_get_symb(t_struct, &buffer[j], &data.cmd);
+	}
+}

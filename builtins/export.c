@@ -78,7 +78,7 @@ static void	ft_add_var(t_envp **env, char *var)
 		add_to_envp_lst(env, create_envp_node(var, 0));
 }
 
-static int	ft_fork_export(t_envp **env)
+int	ft_fork_export(t_envp **env)
 {
 	pid_t	pid;
 

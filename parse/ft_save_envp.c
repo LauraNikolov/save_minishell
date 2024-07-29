@@ -1,9 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_save_envp.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: renard <renard@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/29 00:30:23 by renard            #+#    #+#             */
+/*   Updated: 2024/07/29 00:31:32 by renard           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
-void ft_save_envp(char **envp_tab, t_envp **envp_lst)
+void	ft_save_envp(char **envp_tab, t_envp **envp_lst)
 {
 	int		i;
-	char return_code[4];
+	char	return_code[4];
 
 	i = 0;
 	while (envp_tab[i])

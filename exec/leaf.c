@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 18:11:34 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/23 12:27:50 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/29 16:45:04 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	leaf_stdout(t_cmd *cmd2, t_ast *root, t_ast *save_root)
 }
 
 void	exec_pipe_leaf(t_ast *root, char **envp, int *return_value,
-		save_struct *t_struct)
+		t_save_struct *t_struct)
 {
 	t_cmd	*cmd1;
 	t_cmd	*cmd2;
@@ -58,7 +58,7 @@ void	exec_pipe_leaf(t_ast *root, char **envp, int *return_value,
 		last_pipe(root, cmd2, return_value);
 }
 
-void	and_or_leaf(t_ast *root, char **envp, save_struct *t_struct,
+void	and_or_leaf(t_ast *root, char **envp, t_save_struct *t_struct,
 		int *return_value)
 {
 	if (root->cmd->type == AND)
@@ -81,7 +81,7 @@ void	and_or_leaf(t_ast *root, char **envp, save_struct *t_struct,
 	}
 }
 
-int	exec_leaf(t_ast *root, char **envp, int return_value, save_struct *t_struct)
+int	exec_leaf(t_ast *root, char **envp, int return_value, t_save_struct *t_struct)
 {
 	if (root->cmd->type == WORD)
 		return (0);

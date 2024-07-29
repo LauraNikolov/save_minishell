@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 15:39:53 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/23 12:20:29 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/29 19:13:39 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,33 +33,52 @@ int	ft_limiter(char *s1, char *s2)
 	}
 	return (0);
 }
+static void heredoc_parent(pid_t pid)
+{
+	(void)pid;
+	ft_signal(3);
+	waitpid(pid, &g_exit_status, 0);
+	write(1, "\n", 1);
+}
 
 char	*create_here_doc(char *str, char *limiter)
 {
 	int		file;
 	char	*line;
+	int pid;
 
-	file = open(str, O_CREAT | O_RDWR | O_TRUNC, 0000644);
-	if (file == -1)
-		perror("open:");
-	while (1)
+	pid = fork();
+	if(pid == 0)
 	{
-		write(1, "here_doc>  ", 10);
-		line = get_next_line(STDOUT_FILENO);
-		if (line == NULL)
-			return (NULL);
-		if (ft_limiter(limiter, line) == 1)
-			break ;
-		write(file, line, ft_strlen(line) - 1);
-		write(file, "\n", 1);
-		free(line);
-	}
-	free(line);
-	close(file);
+		ft_signal(2);
+		file = open(str, O_CREAT | O_RDWR | O_TRUNC, 0000644);
+		if (file == -1)
+			perror("open:");
+		while (1)
+		{
+			write(1, "here_doc>  ", 10);
+			line = get_next_line(STDOUT_FILENO);
+			if (line == NULL)
+			{
+				write(STDOUT_FILENO, "\n", 1);
+				break;
+			}
+			if (ft_limiter(limiter, line) == 1)
+				break ;
+			write(file, line, ft_strlen(line) - 1);
+			write(file, "\n", 1);
+			free(line);
+		}
+			free(line);
+			close(file);
+			exit(22);
+		}
+	else
+		heredoc_parent(pid);
 	return (str);
 }
 
-static void	handle_heredoc(t_redir *redir, int i, save_struct *t_struct)
+static void	handle_heredoc(t_redir *redir, int i, t_save_struct *t_struct)
 {
 	char	*heredocname;
 
@@ -72,7 +91,7 @@ static void	handle_heredoc(t_redir *redir, int i, save_struct *t_struct)
 	}
 }
 
-static void	process_redirections(t_cmd *cmd, int *i, save_struct *t_struct)
+static void	process_redirections(t_cmd *cmd, int *i, t_save_struct *t_struct)
 {
 	t_redir	*current_redir;
 
@@ -88,7 +107,7 @@ static void	process_redirections(t_cmd *cmd, int *i, save_struct *t_struct)
 	}
 }
 
-void	manage_heredoc(t_cmd *cmd, save_struct *t_struct)
+void	manage_heredoc(t_cmd *cmd, t_save_struct *t_struct)
 {
 	int		i;
 	t_cmd	*current;

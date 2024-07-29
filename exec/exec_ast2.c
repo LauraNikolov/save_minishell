@@ -6,14 +6,14 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/25 17:08:30 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/26 13:33:04 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/29 16:45:04 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
 int	ft_pipe_recursive(t_ast *root, char **envp, int return_value,
-		save_struct *t_struct)
+		t_save_struct *t_struct)
 {
 	if (root->right->cmd->type == PIPE || root->right->cmd->type == AND
 		|| root->right->cmd->type == OR)
@@ -35,13 +35,13 @@ int	ft_pipe_recursive(t_ast *root, char **envp, int return_value,
 	return (return_value);
 }
 
-int	ft_pipe(t_ast *root, char **envp, int return_value, save_struct *t_struct)
+int	ft_pipe(t_ast *root, char **envp, int return_value, t_save_struct *t_struct)
 {
 	return (ft_pipe_recursive(root, envp, return_value, t_struct));
 }
 
 int	ft_and_recursive(t_ast *root, char **envp, int return_value,
-		save_struct *t_struct)
+		t_save_struct *t_struct)
 {
 	if (root->right->cmd->type == PIPE || root->right->cmd->type == AND
 		|| root->right->cmd->type == OR)
@@ -65,13 +65,13 @@ int	ft_and_recursive(t_ast *root, char **envp, int return_value,
 	return (return_value);
 }
 
-int	ft_and(t_ast *root, char **envp, int return_value, save_struct *t_struct)
+int	ft_and(t_ast *root, char **envp, int return_value, t_save_struct *t_struct)
 {
 	return (ft_and_recursive(root, envp, return_value, t_struct));
 }
 
 int	ft_or_recursive(t_ast *root, char **envp, int return_value,
-		save_struct *t_struct)
+		t_save_struct *t_struct)
 {
 	if (root->right->cmd->type == PIPE || root->right->cmd->type == AND
 		|| root->right->cmd->type == OR)

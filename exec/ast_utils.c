@@ -6,13 +6,13 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 15:45:40 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/23 12:03:32 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/29 16:45:04 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-t_ast	*create_ast_node(t_cmd *cmd, t_ast *parent, save_struct *t_struct)
+t_ast	*create_ast_node(t_cmd *cmd, t_ast *parent, t_save_struct *t_struct)
 {
 	t_ast	*node;
 
@@ -112,7 +112,7 @@ static t_cmd	*find_pipe_root(t_cmd *start, t_cmd *end)
 
 // Fonction principale
 t_ast	*build_ast_recursive(t_cmd *start, t_cmd *end, t_ast *parent,
-		save_struct *t_struct)
+		t_save_struct *t_struct)
 {
 	t_cmd	*root;
 	t_cmd	*right_start;

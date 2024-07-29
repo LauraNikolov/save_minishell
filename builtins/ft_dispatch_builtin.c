@@ -1,10 +1,10 @@
 #include "../minishell.h"
 
-int	ft_dispatch_builtin(t_cmd *cmd, save_struct *t_struct)
+int	ft_dispatch_builtin(t_cmd *cmd, t_save_struct *t_struct)
 {
 	if (!t_struct->cmd->cmd)
 		return (-1);
-	ft_expand(cmd, &t_struct->envp);
+	ft_expand(cmd, &t_struct->envp, t_struct);
 	if (!ft_strcmp(cmd->cmd[0], "echo"))
 		return (ft_echo(cmd, &t_struct->envp));
 	else if (!ft_strcmp(cmd->cmd[0], "export"))
@@ -22,12 +22,12 @@ int	ft_dispatch_builtin(t_cmd *cmd, save_struct *t_struct)
 	return (-1);
 }
 
-int is_it_builtin(t_cmd *cmd, t_envp **env)
+int is_it_builtin(t_cmd *cmd, t_envp **env, t_save_struct *t_struct)
 {
 	if(!cmd->cmd || !cmd->cmd[0])
 		return(0);
-	ft_expand(cmd, env);
-	ft_get_path(cmd);
+	ft_expand(cmd, env, t_struct);
+	ft_get_path(cmd, t_struct);
 	ft_remove_null_node(&cmd);
 	if (!ft_strcmp(cmd->cmd[0], "echo"))
 		return(1);

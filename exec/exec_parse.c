@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 11:56:13 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/26 12:47:52 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/29 19:24:58 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ static void	error_exec_str(char *str, char *cmd, int exit_code)
 	ft_putstr_fd(cmd, 2);
 	ft_putstr_fd(": ", 2);
 	ft_putstr_fd(str, 2);
+	write(2, "\n", 1);
 	exit(exit_code);
 }
 
@@ -89,18 +90,28 @@ void	destroy_tmp_file(t_cmd *cmd)
 	}
 }
 
-void	ft_exec(save_struct *t_struct, char **envp)
+void	ft_exec(t_save_struct *t_struct, char **envp)
 {
 	int	cmd_size;
 	int	return_value;
 
+	return_value = 0;
 	cmd_size = ft_nbr_of_cmd(t_struct->cmd);
 	if (cmd_size == 1)
 	{
 		t_struct->cmd->std_in = 0;
 		t_struct->cmd->std_out = 1;
 		manage_heredoc(t_struct->cmd, t_struct);
-		return_value = ft_execve_single_cmd(t_struct->cmd, &envp, t_struct);
+		printf("g_exit_status: %d\n", g_exit_status);
+		if(g_exit_status != 2)
+			return_value = ft_execve_single_cmd(t_struct->cmd, &envp, t_struct);
+		else
+		{
+			ft_return_code(ft_strdup("130"), &t_struct->envp);
+			destroy_tmp_file(t_struct->cmd);
+			g_exit_status = 0;
+			return;
+		}
 		close_fds(t_struct->cmd);
 		ft_return_code(ft_itoa(return_value), &t_struct->envp);
 		destroy_tmp_file(t_struct->cmd);
@@ -108,7 +119,19 @@ void	ft_exec(save_struct *t_struct, char **envp)
 	else
 	{
 		manage_heredoc(t_struct->cmd, t_struct);
-		ft_exec_multi_cmds(t_struct, envp);
+		// printf("g_exit_status: %d\n", g_exit_status);
+		if(g_exit_status != 2)
+		{
+			ft_signal(1);
+			ft_exec_multi_cmds(t_struct, envp);
+		}
+		else
+		{
+			ft_return_code(ft_strdup("130"), &t_struct->envp);
+			destroy_tmp_file(t_struct->cmd);
+			g_exit_status = 0;
+			return;
+		}
 		close_fds(t_struct->cmd);
 		destroy_tmp_file(t_struct->cmd);
 		recursive_free_ast(&t_struct->ast);
