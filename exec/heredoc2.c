@@ -1,24 +1,43 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   heredoc2.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/31 23:18:08 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/31 23:18:09 by lnicolof         ###   ########.fr       */
+/*   Created: 2024/07/31 23:54:58 by lnicolof          #+#    #+#             */
+/*   Updated: 2024/08/01 00:05:30 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int	ft_env(t_envp **envp)
+int	ft_limiter(char *s1, char *s2)
 {
-	if (!*envp || !envp)
+	int	i;
+	int	y;
+
+	i = 0;
+	y = 0;
+	while (s2[i])
 	{
-		ft_putstr_fd("minishell , environment is empty or null", 2);
-		ft_return_code(ft_strdup("127"), envp);
+		y = 0;
+		while (s2[i] == s1[y] && s1[y] && s2[i])
+		{
+			i++;
+			y++;
+			if (y == (int)ft_strlen(s1))
+				return (1);
+		}
+		i++;
 	}
-	ft_print_envp(envp);
 	return (0);
+}
+
+void	heredoc_parent(pid_t pid, int file)
+{
+	(void)pid;
+	ft_signal(3);
+	waitpid(pid, &g_exit_status, 0);
+	close(file);
 }

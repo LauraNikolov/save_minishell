@@ -1,5 +1,3 @@
-#include "../minishell.h"
-
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -8,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 13:16:52 by melmarti          #+#    #+#             */
-/*   Updated: 2024/07/29 19:48:59 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/31 23:17:34 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +71,7 @@ static int	ft_echo_str(t_cmd *cmd, int option, int i, int fd)
 	}
 	return (0);
 }
+
 static int	ft_handle_option(char **cmd, int *option)
 {
 	int	i;
@@ -105,12 +104,12 @@ int	ft_echo(t_cmd *cmd, t_envp **env, int flag)
 {
 	int	option;
 	int	i;
-	int fd;
+	int	fd;
 
 	(void)flag;
 	option = 0;
 	i = 0;
-	if(!cmd->redir)
+	if (!cmd->redir)
 		fd = 1;
 	else
 		fd = redir_out(cmd);
@@ -129,5 +128,3 @@ int	ft_echo(t_cmd *cmd, t_envp **env, int flag)
 	ft_echo_str(cmd, option, i, fd);
 	return (ft_return_code(ft_strdup("0"), env));
 }
-
-

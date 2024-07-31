@@ -81,7 +81,8 @@ void	and_or_leaf(t_ast *root, char **envp, t_save_struct *t_struct,
 	}
 }
 
-int	exec_leaf(t_ast *root, char **envp, int return_value, t_save_struct *t_struct)
+int	exec_leaf(t_ast *root, char **envp, int return_value,
+		t_save_struct *t_struct)
 {
 	if (root->cmd->type == WORD)
 		return (0);

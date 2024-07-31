@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 11:56:13 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/31 17:27:15 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/08/01 00:13:09 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,36 +14,6 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
-
-static void	error_exec_str(char *str, char *cmd, int exit_code)
-{
-	ft_putstr_fd("minishell :", 2);
-	ft_putstr_fd(cmd, 2);
-	ft_putstr_fd(": ", 2);
-	ft_putstr_fd(str, 2);
-	write(2, "\n", 1);
-	exit(exit_code);
-}
-
-void	ft_parse_error(t_cmd *cmd)
-{
-	struct stat	buf;
-
-	if (stat(cmd->cmd[0], &buf) != -1)
-	{
-		if (((S_ISDIR(buf.st_mode)) && (!ft_strncmp("./", cmd->cmd[0], 2)))
-			|| (cmd->cmd[0][ft_strlen(cmd->cmd[0]) - 1] == '/'))
-			error_exec_str("Is a directory", cmd->cmd[0], 126);
-		if (!(buf.st_mode & S_IXUSR) || !(buf.st_mode & S_IRUSR)
-			|| !S_ISLNK(buf.st_mode) || !S_ISDIR(buf.st_mode))
-			error_exec_str("Permission denied", cmd->cmd[0], 126);
-	}
-	if (ft_strncmp("./", cmd->cmd[0], 2) == 0 || ft_strncmp("/", cmd->cmd[0],
-			1) == 0)
-		error_exec_str("No such file or directory", cmd->cmd[0], 127);
-	else
-		error_exec_str("command not found", cmd->cmd[0], 127);
-}
 
 void	close_fds(t_cmd *cmd_list)
 {
@@ -90,6 +60,23 @@ void	destroy_tmp_file(t_cmd *cmd)
 	}
 }
 
+static void	ft_exec2(t_save_struct *t_struct, char **envp)
+{
+	manage_heredoc(t_struct->cmd, t_struct);
+	if (g_exit_status != 2)
+		ft_exec_multi_cmds(t_struct, envp);
+	else
+	{
+		ft_return_code(ft_strdup("130"), &t_struct->envp);
+		destroy_tmp_file(t_struct->cmd);
+		g_exit_status = 0;
+		return ;
+	}
+	close_fds(t_struct->cmd);
+	destroy_tmp_file(t_struct->cmd);
+	recursive_free_ast(&t_struct->ast);
+}
+
 void	ft_exec(t_save_struct *t_struct, char **envp)
 {
 	int	cmd_size;
@@ -102,36 +89,19 @@ void	ft_exec(t_save_struct *t_struct, char **envp)
 		t_struct->cmd->std_in = 0;
 		t_struct->cmd->std_out = 1;
 		manage_heredoc(t_struct->cmd, t_struct);
-		if(g_exit_status != 2)
+		if (g_exit_status != 2)
 			return_value = ft_execve_single_cmd(t_struct->cmd, &envp, t_struct);
 		else
 		{
 			ft_return_code(ft_strdup("130"), &t_struct->envp);
 			destroy_tmp_file(t_struct->cmd);
 			g_exit_status = 0;
-			return;
+			return ;
 		}
 		close_fds(t_struct->cmd);
 		ft_return_code(ft_itoa(return_value), &t_struct->envp);
 		destroy_tmp_file(t_struct->cmd);
 	}
 	else
-	{
-		manage_heredoc(t_struct->cmd, t_struct);
-		// printf("g_exit_status: %d\n", g_exit_status);
-		if(g_exit_status != 2)
-		{
-			ft_exec_multi_cmds(t_struct, envp);
-		}
-		else
-		{
-			ft_return_code(ft_strdup("130"), &t_struct->envp);
-			destroy_tmp_file(t_struct->cmd);
-			g_exit_status = 0;
-			return;
-		}
-		close_fds(t_struct->cmd);
-		destroy_tmp_file(t_struct->cmd);
-		recursive_free_ast(&t_struct->ast);
-	}
+		ft_exec2(t_struct, envp);
 }

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_dispatch_builtin.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/31 23:51:06 by lnicolof          #+#    #+#             */
+/*   Updated: 2024/07/31 23:51:07 by lnicolof         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 int	ft_dispatch_builtin(t_cmd *cmd, t_save_struct *t_struct, int flag)
@@ -22,27 +34,27 @@ int	ft_dispatch_builtin(t_cmd *cmd, t_save_struct *t_struct, int flag)
 	return (-1);
 }
 
-int is_it_builtin(t_cmd *cmd, t_envp **env, t_save_struct *t_struct)
+int	is_it_builtin(t_cmd *cmd, t_envp **env, t_save_struct *t_struct)
 {
-	if(!cmd->cmd || !cmd->cmd[0])
-		return(0);
+	if (!cmd->cmd || !cmd->cmd[0])
+		return (0);
 	ft_expand(cmd, env, t_struct);
 	ft_get_path(cmd, t_struct);
 	ft_remove_null_node(&cmd);
 	if (!ft_strcmp(cmd->cmd[0], "echo"))
-		return(1);
+		return (1);
 	else if (!ft_strcmp(cmd->cmd[0], "exit"))
-		return(1);
+		return (1);
 	else if (!ft_strcmp(cmd->cmd[0], "pwd"))
-		return(1);
+		return (1);
 	else if (!ft_strcmp(cmd->cmd[0], "env"))
-		return(1);
+		return (1);
 	else if (!ft_strcmp(cmd->cmd[0], "unset"))
-		return(1);
+		return (1);
 	else if (!ft_strcmp(cmd->cmd[0], "cd"))
-		return(1);
+		return (1);
 	else if (!ft_strcmp(cmd->cmd[0], "export"))
-		return(1);
+		return (1);
 	else
-		return(0);
+		return (0);
 }

@@ -6,78 +6,58 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 15:39:53 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/31 12:20:51 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/08/01 00:06:16 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int	ft_limiter(char *s1, char *s2)
+static int	while_heredoc(char **line, int file, char *limiter)
 {
-	int	i;
-	int	y;
-
-	i = 0;
-	y = 0;
-	while (s2[i])
+	while (1)
 	{
-		y = 0;
-		while (s2[i] == s1[y] && s1[y] && s2[i])
+		write(1, "here_doc>  ", 10);
+		*line = get_next_line(STDOUT_FILENO);
+		if (*line == NULL)
 		{
-			i++;
-			y++;
-			if (y == (int)ft_strlen(s1))
-				return (1);
+			write(STDOUT_FILENO, "\n", 1);
+			return (1);
 		}
-		i++;
+		if (ft_limiter(limiter, *line) == 1)
+			return (1);
+		write(file, *line, ft_strlen(*line) - 1);
+		write(file, "\n", 1);
+		free(*line);
 	}
 	return (0);
-}
-static void heredoc_parent(pid_t pid, int file)
-{
-	(void)pid;
-	ft_signal(3);
-	waitpid(pid, &g_exit_status, 0);
-	close(file);
 }
 
 char	*create_here_doc(char *str, char *limiter)
 {
 	int		file;
 	char	*line;
-	int pid;
+	int		pid;
 
 	file = 0;
-		ft_signal(2);
-		file = open(str, O_CREAT | O_RDWR | O_TRUNC, 0000644);
-		if (file == -1)
-			perror("open:");
+	line = NULL;
+	ft_signal(2);
+	file = open(str, O_CREAT | O_RDWR | O_TRUNC, 0000644);
+	if (file == -1)
+		perror("open:");
 	pid = fork();
 	if (pid == 0)
 	{
 		while (1)
 		{
-			write(1, "here_doc>  ", 10);
-			line = get_next_line(STDOUT_FILENO);
-			if (line == NULL)
-			{
-				write(STDOUT_FILENO, "\n", 1);
-				break;
-			}
-			if (ft_limiter(limiter, line) == 1)
+			if (while_heredoc(&line, file, limiter) == 1)
 				break ;
-			write(file, line, ft_strlen(line) - 1);
-			write(file, "\n", 1);
-			free(line);
 		}
-			free(line);
-			close(file);
-			exit(22);
-		}
-	else
-	{
-		heredoc_parent(pid, file);
+		free(line);
+		close(file);
+		exit(22);
 	}
+	else
+		heredoc_parent(pid, file);
 	return (str);
 }
 

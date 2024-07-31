@@ -53,7 +53,8 @@ void	set_pipe_redir(t_cmd *cmd, t_ast *root)
 	}
 }
 
-int	ft_execve_pipe(t_cmd *cmd, char **envp, t_ast *root, t_save_struct *t_struct)
+int	ft_execve_pipe(t_cmd *cmd, char **envp, t_ast *root,
+		t_save_struct *t_struct)
 {
 	int	return_value;
 

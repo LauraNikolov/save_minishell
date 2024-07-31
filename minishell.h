@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 14:41:19 by lauranicolo       #+#    #+#             */
-/*   Updated: 2024/07/31 22:46:01 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/08/01 00:05:51 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,6 +151,8 @@ int		ft_pipe_recursive(t_ast *root, char **envp, int return_value,
 			t_save_struct *tstruct);
 t_cmd	*get_last_cmd(t_ast *node);
 void redir_error(char *str);
+int	ft_limiter(char *s1, char *s2);
+void	heredoc_parent(pid_t pid, int file);
 
 // BUILTINS
 int		ft_fork_export(t_envp **env);
@@ -165,7 +167,7 @@ int		ft_exit(t_save_struct *tstruct, t_envp **envp);
 int		ft_print_envp(t_envp **envp);
 int		ft_pwd(char **cmd, t_envp **envp);
 int		ft_cd(t_save_struct *tstruct);
-
+int	error_export2(char *var, t_envp **env);
 // signal
 void	ft_signal(int pid);
 void	ft_handler_child_signals(int signal);

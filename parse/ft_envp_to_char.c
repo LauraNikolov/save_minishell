@@ -61,11 +61,11 @@ static void	ft_split_envp(char **envp, t_envp *env)
 	int	k;
 
 	j = -1;
-	if(!env || !envp || !env->var_name)
+	if (!env || !envp || !env->var_name)
 		return ;
 	while (env)
 	{
-		if(!env->var_name)
+		if (!env->var_name)
 		{
 			env = env->next;
 			continue ;

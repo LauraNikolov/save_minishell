@@ -1,31 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   export.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/31 23:49:29 by lnicolof          #+#    #+#             */
+/*   Updated: 2024/07/31 23:49:30 by lnicolof         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
-
-void	ft_print_env(t_envp **env)
-{
-	t_envp	*curr;
-
-	curr = *env;
-	while (curr)
-	{
-		if (!ft_strcmp(curr->var_name, "?"))
-		{
-			curr = curr->next;
-			continue ;
-		}
-		ft_putstr_fd("declare -x ", 1);
-		ft_putstr_fd(curr->var_name, 1);
-		if (curr->var_value)
-		{
-			write(1, "=\"", 3);
-			ft_putstr_fd(curr->var_value, 1);
-			write(1, "\"", 2);
-		}
-		else if (curr->print_flag && !curr->var_value)
-			write(1, "=\"\"", 4);
-		write(1, "\n", 2);
-		curr = curr->next;
-	}
-}
 
 void	ft_sort_env(t_envp **env)
 {
@@ -47,17 +32,23 @@ void	ft_sort_env(t_envp **env)
 	}
 }
 
-static void	ft_add_var(t_envp **env, char *var)
+static int	set_i(char *var)
 {
-	t_envp	*curr;
-	int		i;
-	int		flag;
+	int	i;
 
-	flag = 0;
 	i = ft_strchr(var, '=');
 	if (i == -1)
 		i = ft_strlen(var);
+	return (i);
+}
+
+static void	ft_add_var(t_envp **env, char *var, int flag)
+{
+	t_envp	*curr;
+	int		i;
+
 	curr = *env;
+	i = set_i(var);
 	while (curr)
 	{
 		if (!ft_strncmp(curr->var_name, var, i))
@@ -96,39 +87,29 @@ int	ft_fork_export(t_envp **env)
 
 int	ft_export(t_cmd *node, t_envp **env)
 {
-	int	i;
-	int	j;
+	int		i;
+	int		j;
+	char	**var;
 
-	char **var = node->cmd;
+	var = node->cmd;
 	if (!env || !*var)
 		return (0);
 	if (!var[1])
 		return (ft_fork_export(env));
-	i = 1;
+	i = 0;
 	ft_expand(node, env, NULL);
-	while (var[i])
+	while (var[++i])
 	{
 		j = 0;
 		if (var[i][0] == '=')
-		{
-			ft_putstr_cmd_fd("Minishell : export: `", 2, NULL, 2);
-			ft_putstr_cmd_fd(var[i], 2, NULL, 2);
-			ft_putstr_cmd_fd("': not a valid identifier", 2, NULL, 0);
-			return (ft_return_code(ft_strdup("1"), env));
-		}
+			error_export2(var[i], env);
 		while (var[i][j] && var[i][j] != '=')
 		{
 			if (var[i][j] == '-' || !ft_isalpha(var[i][0]))
-			{
-				ft_putstr_cmd_fd("Minishell : export: `", 2, NULL, 2);
-				ft_putstr_cmd_fd(var[i], 2, NULL, 2);
-				ft_putstr_cmd_fd("': not a valid identifier", 2, NULL, 0);
-				return (ft_return_code(ft_strdup("1"), env));
-			}
+				error_export2(var[i], env);
 			j++;
 		}
-		ft_add_var(env, var[i]);
-		i++;
+		ft_add_var(env, var[i], 0);
 	}
 	return (ft_return_code(ft_strdup("0"), env));
 }
