@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 00:29:55 by renard            #+#    #+#             */
-/*   Updated: 2024/07/29 16:44:23 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/31 22:39:47 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,5 +123,6 @@ void	ft_create_token_lst(char *buffer, t_save_struct *t_struct)
 					- len], len, &data, &data.cmd), &data.cmd, &exp_code));
 		if (ft_is_str(buffer[j], "|()&"))
 			j += ft_get_symb(t_struct, &buffer[j], &data.cmd);
+		ft_print_lst(t_struct->cmd);
 	}
 }

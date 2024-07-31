@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 00:30:05 by renard            #+#    #+#             */
-/*   Updated: 2024/07/31 22:36:40 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/31 22:49:59 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void	ft_get_path(t_cmd *node, t_save_struct *t_struct)
 	(void)t_struct;
 	if (!node->cmd)
 		return ;
-	path = getenv("PATH");
+	path = ft_search_var("PATH", &t_struct->envp);
 	if(!path)
 	{
 		node->path = ft_strdup(node->cmd[0]);

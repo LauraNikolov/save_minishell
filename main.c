@@ -32,6 +32,7 @@ int	main(int ac, char **av, char **envp)
 		t_struct = malloc(sizeof(t_save_struct));
 		if (!t_struct)
 			return (ft_free_envp_lst(&env, NULL), 0);
+		t_struct->save_envp = envp;
 		ft_memset(t_struct, 0, sizeof(*t_struct));
 		buffer = readline("minishell> ");
 		if (!buffer)
