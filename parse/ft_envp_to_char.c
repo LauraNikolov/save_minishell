@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_envp_to_char.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: melmarti <melmarti@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/28 13:53:09 by melmarti          #+#    #+#             */
-/*   Updated: 2024/07/29 14:16:12 by melmarti         ###   ########.fr       */
+/*   Updated: 2024/07/31 16:33:28 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,15 +61,26 @@ static void	ft_split_envp(char **envp, t_envp *env)
 	int	k;
 
 	j = -1;
+	if(!env || !envp || !env->var_name)
+		return ;
 	while (env)
 	{
+		if(!env->var_name)
+		{
+			env = env->next;
+			continue ;
+		}
 		envp[++j] = malloc(sizeof(char) * (ft_var_size(env) + 1));
 		if (!envp[j])
 			return ;
 		k = 0;
 		l = 0;
 		while (env->var_name[l])
-			envp[j][k++] = env->var_name[l++];
+		{
+			envp[j][k] = env->var_name[l];
+			l++;
+			k++;
+		}
 		envp[j][k++] = '=';
 		l = 0;
 		if (env->var_value)

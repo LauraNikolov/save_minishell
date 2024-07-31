@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 20:43:21 by lauranicolo       #+#    #+#             */
-/*   Updated: 2024/07/22 10:55:23 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/31 20:10:04 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	open_redir_in(t_redir *current, int *fd_in, int *fd_out)
 	if (*fd_in == -1)
 	{
 		access(current->next->redir, R_OK);
-		perror("minishell");
+		redir_error(current->next->redir);
 		return (-1);
 	}
 	return (0);
@@ -32,7 +32,7 @@ int	open_redir_rout(t_redir *current, int *fd_in, int *fd_out)
 	if (*fd_out == -1)
 	{
 		access(current->next->redir, R_OK);
-		perror("minishell");
+		redir_error(current->next->redir);
 		return (-1);
 	}
 	return (0);
@@ -45,7 +45,7 @@ int	open_redir_rappend(t_redir *current, int *fd_in, int *fd_out)
 	if (*fd_out == -1)
 	{
 		access(current->next->redir, R_OK);
-		perror("minishell");
+		redir_error(current->next->redir);
 		return (-1);
 	}
 	return (0);
@@ -61,8 +61,8 @@ void	set_new_fd(t_cmd *cmd, int *fd_in, int *fd_out)
 	}
 	if (*fd_out != -1)
 	{
-		if (cmd->std_in != 0)
-			close(cmd->std_in);
+		if (cmd->std_out != 1)
+			close(cmd->std_out);
 		cmd->std_out = *fd_out;
 	}
 }

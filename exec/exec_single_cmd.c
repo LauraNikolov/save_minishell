@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 16:05:37 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/29 19:34:57 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/31 19:53:32 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,8 @@ int	ft_execve_single_cmd(t_cmd *cmd, char ***envp, t_save_struct *t_struct)
 	if (is_it_builtin(cmd, &t_struct->envp, t_struct) == 1)
 	{
 		if (apply_redir(cmd) == -1)
-			return (ft_return_code("1", &t_struct->envp));
-		return_value = ft_dispatch_builtin(cmd, t_struct);
+			return (ft_return_code(ft_strdup("1"), &t_struct->envp));
+		return_value = ft_dispatch_builtin(cmd, t_struct, 0);
 		if (return_value != -1)
 		{
 			if (update_envp(envp, t_struct) == -1)

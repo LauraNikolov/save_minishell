@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 00:30:42 by renard            #+#    #+#             */
-/*   Updated: 2024/07/29 19:30:15 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/31 21:19:54 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,9 @@ int	ft_check_redir2(t_cmd *node, t_envp **env)
 			{
 				ft_putstr_fd("minishell: syntax error near unexpected token `",
 					2);
-				ft_putstr_fd(tmp->next->redir, 2);
+				if(tmp->next->redir)
+					ft_putstr_fd(tmp->next->redir, 2);
+				ft_putstr_fd("'\n", 2);
 			}
 			return (ft_return_code(ft_strdup("2"), env), -1);
 		}
@@ -56,9 +58,11 @@ int	ft_check_redir(t_cmd *node, t_envp **env)
 	{
 		ft_putstr_fd("minishell: syntax error near unexpected token `newline'",
 			2);
+		write(2, "\n", 1);
 		return (ft_return_code(ft_strdup("2"), env), -1);
 	}
-	ft_check_redir2(node, env);
+	if(ft_check_redir2(node, env) == -1)
+		return (-1);
 	return (0);
 }
 

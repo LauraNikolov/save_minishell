@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 17:39:28 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/29 19:35:10 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/31 19:56:40 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ int	ft_execve_pipe(t_cmd *cmd, char **envp, t_ast *root, t_save_struct *t_struct
 	{
 		set_pipe_redir(cmd, root);
 		close(root->cmd->pipe[0]);
-		return_value = ft_dispatch_builtin(cmd, t_struct);
+		return_value = ft_dispatch_builtin(cmd, t_struct, 0);
 		if (return_value != -1)
 			exit(return_value);
 		else

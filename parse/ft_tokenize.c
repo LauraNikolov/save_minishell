@@ -6,13 +6,12 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 00:30:25 by renard            #+#    #+#             */
-/*   Updated: 2024/07/29 19:43:28 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/31 20:57:54 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int		g_exit_status = 0;
 
 void	ft_handler_signals(int signal)
 {
@@ -46,6 +45,7 @@ void	ft_signal(int pid)
 	{
 		signal(SIGQUIT, SIG_IGN);
 		signal(SIGINT, ft_handler_signals);
+		
 	}
 	else if (pid == 0)
 	{
@@ -94,6 +94,9 @@ int	ft_tokenize(char *buffer, t_save_struct *tstruct, t_envp **env)
 		|| !tstruct->cmd)
 		return (-1);
 	if (g_exit_status != 0)
+	{
 		ft_return_code(ft_itoa(get_return_sig(&g_exit_status)), env);
+		g_exit_status = 0;
+	}
 	return (0);
 }

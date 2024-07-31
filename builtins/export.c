@@ -105,6 +105,7 @@ int	ft_export(t_cmd *node, t_envp **env)
 	if (!var[1])
 		return (ft_fork_export(env));
 	i = 1;
+	ft_expand(node, env, NULL);
 	while (var[i])
 	{
 		j = 0;

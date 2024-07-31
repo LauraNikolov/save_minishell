@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 14:15:39 by melmarti          #+#    #+#             */
-/*   Updated: 2024/07/29 16:44:23 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/31 14:55:34 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ typedef struct s_exec
 	int				pipe[2];
 }					t_exec;
 
+									
 typedef struct s_save_struct
 {
 	char			*save_spaces;
@@ -104,5 +105,14 @@ typedef struct s_data_parsing
 	int				k;
 	t_save_struct	*t_struct;
 }					t_data_parsing;
+
+typedef struct s_vars
+{
+    t_envp **env;
+    char **res;
+    int *j;
+    int *i;
+    int len;
+} t_vars;
 
 #endif

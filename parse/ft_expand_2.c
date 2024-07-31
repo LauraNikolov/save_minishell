@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_expand_2.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: melmarti <melmarti@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 00:30:00 by renard            #+#    #+#             */
-/*   Updated: 2024/07/29 14:38:34 by melmarti         ###   ########.fr       */
+/*   Updated: 2024/07/31 15:34:45 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,8 @@ int	ft_expand_len(char *s, t_envp **env, char **exp_code)
 	total_var_len = 0;
 	j = 0;
 	i = -1;
+	if(!s)
+		return (0);
 	while (s[++i])
 	{
 		if (s[i] == '$' && (ft_isalnum(s[i + 1])) && s[i + 1] != '?')
@@ -99,6 +101,8 @@ void	ft_cpy_expand(char *s, t_data_parsing *data, t_envp **env,
 
 	j = 0;
 	i = 0;
+	if(!s)
+		return ;
 	while (s[i])
 	{
 		if (s[i] == '$' && ft_isalnum(s[i + 1]) && s[i + 1] != '?')

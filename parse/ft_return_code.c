@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 00:30:19 by renard            #+#    #+#             */
-/*   Updated: 2024/07/29 19:23:44 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/31 13:43:56 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,13 @@ int	ft_return_code(char *code, t_envp **env)
 	{
 		if (!ft_strcmp(curr->var_name, "?"))
 		{
-			ft_safe_free(&curr->var_value);
+			free(curr->var_value);
 			curr->var_value = ft_strdup(code);
 			break ;
 		}
 		curr = curr->next;
 	}
-	free(code);
+	if(code)
+		free(code);
 	return (ft_atoi(curr->var_value));
 }

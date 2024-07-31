@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 14:41:19 by lauranicolo       #+#    #+#             */
-/*   Updated: 2024/07/29 17:18:55 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/31 21:19:25 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ t_redir	*lst_last_redir(t_redir *node);
 void	add_to_redir_lst(t_redir **head, t_redir *new_node);
 t_envp	*lst_envp_last(t_envp *node);
 void	ft_free_node(t_cmd *node);
+void	ft_print_lst(t_cmd *node);
 t_envp	*create_envp_node(char *var_name, int print_flag);
 void	ft_free_tab(char **split);
 void	ft_free_lst(t_cmd *lst);
@@ -149,16 +150,17 @@ int		ft_pipe(t_ast *root, char **envp, int return_value,
 int		ft_pipe_recursive(t_ast *root, char **envp, int return_value,
 			t_save_struct *tstruct);
 t_cmd	*get_last_cmd(t_ast *node);
+void redir_error(char *str);
 
 // BUILTINS
 int		ft_fork_export(t_envp **env);
 void	ft_compare_var(t_envp **env, char *var);
 int		ft_handle_export_err(char *var);
-int		ft_dispatch_builtin(t_cmd *cmd, t_save_struct *tstruct);
+int	ft_dispatch_builtin(t_cmd *cmd, t_save_struct *t_struct, int flag);
 int		ft_export(t_cmd *cmd, t_envp **env);
 int		ft_unset(char **var, t_envp **env);
 int		ft_env(t_envp **envp);
-int		ft_echo(t_cmd *cmd, t_envp **env);
+int		ft_echo(t_cmd *cmd, t_envp **env, int flag);
 int		ft_exit(t_save_struct *tstruct, t_envp **envp);
 int		ft_print_envp(t_envp **envp);
 int		ft_pwd(char **cmd, t_envp **envp);

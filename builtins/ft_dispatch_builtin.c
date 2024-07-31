@@ -1,12 +1,12 @@
 #include "../minishell.h"
 
-int	ft_dispatch_builtin(t_cmd *cmd, t_save_struct *t_struct)
+int	ft_dispatch_builtin(t_cmd *cmd, t_save_struct *t_struct, int flag)
 {
 	if (!t_struct->cmd->cmd)
 		return (-1);
 	ft_expand(cmd, &t_struct->envp, t_struct);
 	if (!ft_strcmp(cmd->cmd[0], "echo"))
-		return (ft_echo(cmd, &t_struct->envp));
+		return (ft_echo(cmd, &t_struct->envp, flag));
 	else if (!ft_strcmp(cmd->cmd[0], "export"))
 		return (ft_export(cmd, &t_struct->envp));
 	else if (!ft_strcmp(cmd->cmd[0], "exit"))

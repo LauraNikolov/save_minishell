@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 15:39:53 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/29 19:13:39 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/31 12:20:51 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,12 +33,12 @@ int	ft_limiter(char *s1, char *s2)
 	}
 	return (0);
 }
-static void heredoc_parent(pid_t pid)
+static void heredoc_parent(pid_t pid, int file)
 {
 	(void)pid;
 	ft_signal(3);
 	waitpid(pid, &g_exit_status, 0);
-	write(1, "\n", 1);
+	close(file);
 }
 
 char	*create_here_doc(char *str, char *limiter)
@@ -47,13 +47,14 @@ char	*create_here_doc(char *str, char *limiter)
 	char	*line;
 	int pid;
 
-	pid = fork();
-	if(pid == 0)
-	{
+	file = 0;
 		ft_signal(2);
 		file = open(str, O_CREAT | O_RDWR | O_TRUNC, 0000644);
 		if (file == -1)
 			perror("open:");
+	pid = fork();
+	if (pid == 0)
+	{
 		while (1)
 		{
 			write(1, "here_doc>  ", 10);
@@ -74,7 +75,9 @@ char	*create_here_doc(char *str, char *limiter)
 			exit(22);
 		}
 	else
-		heredoc_parent(pid);
+	{
+		heredoc_parent(pid, file);
+	}
 	return (str);
 }
 

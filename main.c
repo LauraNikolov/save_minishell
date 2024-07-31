@@ -13,12 +13,14 @@
 
 #include "minishell.h"
 
+int		g_exit_status = 0;
 
 int	main(int ac, char **av, char **envp)
 {
 	char		*buffer;
 	t_envp		*env;
 	t_save_struct	*t_struct;
+	int i;
 
 	(void)av;
 	(void)ac;
@@ -37,9 +39,12 @@ int	main(int ac, char **av, char **envp)
 				ft_all_free(t_struct, 1, &buffer), 0);
 		add_history(buffer);
 		if (ft_tokenize(buffer, t_struct, &env) != -1)
+		{
 			ft_exec(t_struct, ft_envp_to_char(t_struct->envp));
+		}
 		free(buffer);
 		ft_all_free(t_struct, 0, &buffer);
+		i++;
 	}
 	return (0);
 }

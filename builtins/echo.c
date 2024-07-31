@@ -31,7 +31,7 @@ static int	ft_redir_echo(t_redir *current, int fd)
 		}
 		if (fd == -1)
 		{
-			perror("minishell");
+			redir_error(current->next->redir);
 			return (-1);
 		}
 		if (!current->next->next)
@@ -55,21 +55,8 @@ int	redir_out(t_cmd *cmd)
 	return (ft_redir_echo(current, fd));
 }
 
-static int	ft_echo_str(t_cmd *cmd, int option, int i, t_envp **env)
+static int	ft_echo_str(t_cmd *cmd, int option, int i, int fd)
 {
-	int	fd;
-
-	fd = 1;
-	if (cmd->redir)
-	{
-		fd = redir_out(cmd);
-		if (fd == -1)
-		{
-			ft_putstr_fd("No such file or directory", 2);
-			return (0);
-		}
-		return (ft_return_code(ft_strdup("126"), env));
-	}
 	while (cmd->cmd[i])
 	{
 		ft_putstr_fd(cmd->cmd[i], fd);
@@ -79,8 +66,11 @@ static int	ft_echo_str(t_cmd *cmd, int option, int i, t_envp **env)
 	}
 	if (!option)
 		ft_putchar_fd('\n', fd);
-	if (fd != 1)
-		close(fd);
+	if (cmd->std_out != 1)
+	{
+		close(cmd->std_out);
+		cmd->std_out = 1;
+	}
 	return (0);
 }
 static int	ft_handle_option(char **cmd, int *option)
@@ -111,25 +101,19 @@ static int	ft_handle_option(char **cmd, int *option)
 	return (i);
 }
 
-int	ft_echo(t_cmd *cmd, t_envp **env)
+int	ft_echo(t_cmd *cmd, t_envp **env, int flag)
 {
 	int	option;
 	int	i;
-	int	fd;
+	int fd;
 
+	(void)flag;
 	option = 0;
 	i = 0;
-	fd = 1;
-	if (cmd->redir)
-	{
+	if(!cmd->redir)
+		fd = 1;
+	else
 		fd = redir_out(cmd);
-		if (fd == -1)
-		{
-			perror("minishell:");
-			return (0);
-		}
-		return (ft_return_code(ft_strdup("0"), env));
-	}
 	if (!cmd->cmd[1])
 	{
 		ft_putchar_fd('\n', fd);
@@ -142,7 +126,7 @@ int	ft_echo(t_cmd *cmd, t_envp **env)
 	}
 	if (cmd->cmd[1])
 		i = ft_handle_option(cmd->cmd, &option);
-	ft_echo_str(cmd, option, i, env);
+	ft_echo_str(cmd, option, i, fd);
 	return (ft_return_code(ft_strdup("0"), env));
 }
 

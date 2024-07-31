@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 11:56:13 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/07/29 19:24:58 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/07/31 17:27:15 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,6 @@ void	ft_exec(t_save_struct *t_struct, char **envp)
 		t_struct->cmd->std_in = 0;
 		t_struct->cmd->std_out = 1;
 		manage_heredoc(t_struct->cmd, t_struct);
-		printf("g_exit_status: %d\n", g_exit_status);
 		if(g_exit_status != 2)
 			return_value = ft_execve_single_cmd(t_struct->cmd, &envp, t_struct);
 		else
@@ -122,7 +121,6 @@ void	ft_exec(t_save_struct *t_struct, char **envp)
 		// printf("g_exit_status: %d\n", g_exit_status);
 		if(g_exit_status != 2)
 		{
-			ft_signal(1);
 			ft_exec_multi_cmds(t_struct, envp);
 		}
 		else
