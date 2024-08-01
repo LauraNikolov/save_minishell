@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lst_utils_2.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: melmarti <melmarti@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 00:30:32 by renard            #+#    #+#             */
-/*   Updated: 2024/07/29 13:59:25 by melmarti         ###   ########.fr       */
+/*   Updated: 2024/08/01 13:27:15 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,9 +50,14 @@ t_envp	*create_envp_node(char *var, int print_flag)
 	if (!envp || !var)
 		return (NULL);
 	i = 0;
-	while (var[i] && var[i] != '=')
-		i++;
-	envp->var_name = ft_strndup(var, i);
+	if (var[i])
+	{
+		while (var[i] && var[i] != '=')
+			i++;
+		envp->var_name = ft_strndup(var, i);
+	}
+	else
+		envp->var_name = NULL;
 	envp->var_value = NULL;
 	if (var[i + 1])
 		envp->var_value = ft_strdup(&var[i + 1]);

@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/28 13:53:09 by melmarti          #+#    #+#             */
-/*   Updated: 2024/07/31 16:33:28 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/08/01 13:25:30 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ static void	ft_split_envp(char **envp, t_envp *env)
 		if (!envp[j])
 			return ;
 		k = 0;
-		l = 0;
+		l = 0;	
 		while (env->var_name[l])
 		{
 			envp[j][k] = env->var_name[l];
@@ -92,13 +92,13 @@ static void	ft_split_envp(char **envp, t_envp *env)
 	envp[j] = NULL;
 }
 
-char	**ft_envp_to_char(t_envp *env)
+char	**ft_envp_to_char(t_envp *env, t_save_struct *tstruct)
 {
-	char	**envp;
-
-	envp = malloc(sizeof(char *) * (ft_lst_env_size(env)));
-	if (!envp)
-		return (NULL);
-	ft_split_envp(envp, env);
-	return (envp);
+	if(tstruct->envp_to_char)
+		ft_free_tab(tstruct->envp_to_char);
+	tstruct->envp_to_char = malloc(sizeof(char *) * (ft_lst_env_size(env)));
+	if (tstruct->envp_to_char == NULL)
+		return (exit_error("malloc failed\n", tstruct), NULL);
+	ft_split_envp(tstruct->envp_to_char, env);
+	return (tstruct->envp_to_char);
 }

@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 14:15:39 by melmarti          #+#    #+#             */
-/*   Updated: 2024/07/31 22:42:02 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/08/01 12:44:11 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,7 @@ typedef struct s_save_struct
 	struct s_envp	*envp;
 	struct s_exec	*exec;
 	char **save_envp;
+	char **envp_to_char;
 }					t_save_struct;
 
 typedef struct s_data_parsing
