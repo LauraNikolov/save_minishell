@@ -21,20 +21,21 @@ int	main(int ac, char **av, char **envp)
 	t_envp			*env;
 	t_save_struct	*t_struct;
 	int				i;
-	char			**en;
-	char			**env1;
+	//  char			**env1;
 
 	(void)av;
 	(void)ac;
 	env = NULL;
 	ft_save_envp(envp, &env);
-	t_struct = malloc(sizeof(t_save_struct));
-	if (!t_struct)
-		return (ft_free_envp_lst(&env, NULL), 0);
-	en = NULL;
-	t_struct->envp_to_char = en;
-	env1 = ft_envp_to_char(env, t_struct);
-	ft_free_tab(env1);
+	// t_struct = malloc(sizeof(t_save_struct));
+	// ft_memset(t_struct, 0, sizeof(*t_struct));
+	// if (!t_struct)
+	// 	return (ft_free_envp_lst(&env, NULL), 0);
+	// env1 = ft_envp_to_char(env, t_struct);
+	// t_struct->envp_to_char = env1;
+	// ft_free_envp_lst(&t_struct->envp, &env);
+	// ft_all_free(t_struct, 0, &buffer);
+	// exit(0);
 	while (1)
 	{
 		ft_signal(1);
@@ -50,7 +51,7 @@ int	main(int ac, char **av, char **envp)
 		add_history(buffer);
 		if (ft_tokenize(buffer, t_struct, &env) != -1)
 		{
-			ft_exec(t_struct, ft_envp_to_char(t_struct->envp, t_struct));
+			ft_exec(t_struct, ft_envp_to_char(&t_struct->envp, t_struct));
 		}
 		free(buffer);
 		ft_all_free(t_struct, 0, &buffer);

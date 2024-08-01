@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 00:30:35 by renard            #+#    #+#             */
-/*   Updated: 2024/08/01 13:29:36 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/08/01 14:30:08 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,6 @@ void	ft_free_envp_lst(t_envp **lst, t_envp **env)
 	curr = *lst;
 	while (curr)
 	{
-		dprintf(2, "freeing %s\n", curr->var_name);
 		temp = curr->next;
 		free(curr->var_name);
 		free(curr->var_value);

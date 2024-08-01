@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 16:05:37 by lnicolof          #+#    #+#             */
-/*   Updated: 2024/08/01 13:03:44 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/08/01 15:19:18 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ static int	update_envp(char ***envp, t_save_struct *t_struct)
 {
 	char	**new_envp;
 
-	new_envp = ft_envp_to_char(t_struct->envp, t_struct);
+	new_envp = ft_envp_to_char(&t_struct->envp, t_struct);
 	if (new_envp == NULL)
 	{
 		return (-1);

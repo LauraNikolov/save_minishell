@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 14:41:19 by lauranicolo       #+#    #+#             */
-/*   Updated: 2024/08/01 12:40:41 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/08/01 15:17:46 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ void	ft_safe_free(char **s);
 void	ft_override_content(char **s1, char *s2);
 void	ft_swap_content(char **s1, char **s2);
 int		ft_is_str(char c, char *s);
-char	**ft_envp_to_char(t_envp *env, t_save_struct *tstruct);
+char	**ft_envp_to_char(t_envp **env, t_save_struct *tstruct);
 
 // exec
 void	ft_exec(t_save_struct *tstruct, char **envp);

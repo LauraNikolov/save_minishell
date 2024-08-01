@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/28 13:53:09 by melmarti          #+#    #+#             */
-/*   Updated: 2024/08/01 13:25:30 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/08/01 15:27:26 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,11 @@ static int	ft_lst_env_size(t_envp *env)
 	i = 0;
 	while (env)
 	{
+		if (!env->var_name)
+		{
+			env = env->next;
+			continue ;
+		}
 		env = env->next;
 		i++;
 	}
@@ -54,49 +59,57 @@ static int	ft_var_size(t_envp *node)
 	return (len + 1);
 }
 
-static void	ft_split_envp(char **envp, t_envp *env)
+static void	ft_split_envp(char **envp, t_envp **env)
 {
 	int	j;
 	int	l;
 	int	k;
+	int len;
+	t_envp *curr;
+
+	curr = *env;
 
 	j = -1;
-	if (!env || !envp || !env->var_name)
+	if (!env)
 		return ;
-	while (env)
+	while (curr)
 	{
-		if (!env->var_name)
+		if (!curr->var_name)
 		{
-			env = env->next;
+			curr = curr->next;
 			continue ;
 		}
-		envp[++j] = malloc(sizeof(char) * (ft_var_size(env) + 1));
+		len = ft_var_size(curr) + 1;
+		printf("size = %d, %s", len, curr->var_name);
+		envp[++j] = malloc(sizeof(char) * len);
 		if (!envp[j])
 			return ;
 		k = 0;
 		l = 0;	
-		while (env->var_name[l])
+		while (curr->var_name[l])
 		{
-			envp[j][k] = env->var_name[l];
+			envp[j][k] = curr->var_name[l];
 			l++;
 			k++;
 		}
 		envp[j][k++] = '=';
 		l = 0;
-		if (env->var_value)
-			while (env->var_value[l])
-				envp[j][k++] = env->var_value[l++];
-		envp[j][k] = '\0';
-		env = env->next;
+		if (curr->var_value)
+			while (curr->var_value[l])
+				envp[j][k++] = curr->var_value[l++];
+		envp[j][k] = curr->var_name[l];
+		printf(" strlen = %ld\n\n", strlen(envp[j]));
+		curr = curr->next;
 	}
 	envp[j] = NULL;
 }
 
-char	**ft_envp_to_char(t_envp *env, t_save_struct *tstruct)
+char	**ft_envp_to_char(t_envp **env, t_save_struct *tstruct)
 {
 	if(tstruct->envp_to_char)
 		ft_free_tab(tstruct->envp_to_char);
-	tstruct->envp_to_char = malloc(sizeof(char *) * (ft_lst_env_size(env)));
+	tstruct->envp_to_char = NULL;
+	tstruct->envp_to_char = malloc(sizeof(char *) * (ft_lst_env_size(*env)));
 	if (tstruct->envp_to_char == NULL)
 		return (exit_error("malloc failed\n", tstruct), NULL);
 	ft_split_envp(tstruct->envp_to_char, env);

@@ -6,7 +6,7 @@
 /*   By: lnicolof <lnicolof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 00:30:32 by renard            #+#    #+#             */
-/*   Updated: 2024/08/01 13:27:15 by lnicolof         ###   ########.fr       */
+/*   Updated: 2024/08/01 15:31:03 by lnicolof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ t_envp	*create_envp_node(char *var, int print_flag)
 	envp = malloc(sizeof(t_envp));
 	if (!envp || !var)
 		return (NULL);
+	envp->var_name = NULL;
 	i = 0;
 	if (var[i])
 	{
